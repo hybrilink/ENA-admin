@@ -1,0 +1,2153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>NAC-Business - Administration</title>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192x192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Theo Pro">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Theo Pro">
+    <meta name="theme-color" content="#0f0c29">
+    <meta name="msapplication-TileColor" content="#0f0c29">
+    <meta name="msapplication-config" content="browserconfig.xml">
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+    <link rel="mask-icon" href="icons/safari-pinned-tab.svg" color="#ffb347">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary-blue: #003366;
+            --dark-blue: #002244;
+            --accent-yellow: #ffb347;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+            --success-green: #28a745;
+            --danger-red: #dc3545;
+            --info-blue: #17a2b8;
+            --warning-orange: #fd7e14;
+        }
+        body {
+            background: #f0f2f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .auth-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--white) 60%, var(--primary-blue) 40%);
+            padding: 20px;
+        }
+        .auth-card {
+            background: var(--white);
+            border-radius: 25px;
+            box-shadow: 0 20px 40px rgba(0, 51, 102, 0.25);
+            padding: 35px;
+            max-width: 420px;
+            width: 100%;
+            border-top: 5px solid var(--accent-yellow);
+            border-bottom: 5px solid var(--primary-blue);
+        }
+        .auth-card h2 {
+            color: var(--primary-blue);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .auth-card h2 i { color: var(--accent-yellow); margin-right: 10px; }
+
+        .main-interface { display: none; min-height: 100vh; }
+
+        .app-header {
+            background: var(--primary-blue);
+            padding: 10px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header-title {
+            color: var(--white);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .header-title i { color: var(--accent-yellow); margin-right: 8px; }
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 5px 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 30px;
+        }
+        .user-profile img {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-yellow);
+            object-fit: cover;
+        }
+        .user-profile span {
+            color: var(--white);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header-actions .btn {
+            color: var(--white);
+            border-color: rgba(255,255,255,0.3);
+            font-size: 0.8rem;
+            padding: 5px 12px;
+        }
+        .header-actions .btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            padding: 14px 16px;
+            background: var(--white);
+            border-bottom: 1px solid #eee;
+        }
+        .nav-btn {
+            background: var(--white);
+            color: var(--primary-blue);
+            border: 1px solid #e0e0e0;
+            border-radius: 14px;
+            padding: 10px 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .nav-btn i { font-size: 1.3rem; }
+        .nav-btn.active {
+            background: var(--primary-blue);
+            color: var(--white);
+            border-color: var(--primary-blue);
+        }
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,51,102,0.2);
+        }
+
+        .content-area { padding: 16px; max-width: 1200px; margin: 0 auto; }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+
+        .section-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--accent-yellow);
+        }
+        .section-title {
+            color: var(--primary-blue);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-yellow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-label { font-weight: 600; color: var(--primary-blue); }
+        .form-control, .form-select {
+            border-radius: 12px;
+            padding: 10px 14px;
+            border: 2px solid #e0e0e0;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 0.2rem rgba(0,51,102,0.15);
+        }
+        .btn-primary {
+            background: var(--primary-blue);
+            border: none;
+            padding: 10px 20px;
+            font-weight: 600;
+            border-radius: 12px;
+        }
+        .btn-primary:hover { background: var(--dark-blue); }
+        .btn-success {
+            background: var(--success-green);
+            border: none;
+            font-weight: 600;
+            border-radius: 12px;
+        }
+        .btn-success:hover { background: #1e7e34; }
+        .btn-warning {
+            background: var(--accent-yellow);
+            border: none;
+            color: var(--primary-blue);
+            font-weight: 600;
+            border-radius: 12px;
+        }
+        .btn-warning:hover { background: #e6a03a; }
+
+        .table-custom { width: 100%; border-collapse: collapse; }
+        .table-custom th {
+            background: var(--primary-blue);
+            color: var(--white);
+            padding: 10px;
+            font-size: 0.8rem;
+            text-align: left;
+        }
+        .table-custom td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.8rem;
+            vertical-align: middle;
+        }
+        .table-custom tr:hover td { background: #f8f9fa; }
+        .table-custom img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .badge-role {
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .badge-role.frere { background: #17a2b8; color: white; }
+        .badge-role.diacre { background: #6f42c1; color: white; }
+        .badge-role.pretre { background: #dc3545; color: white; }
+        .badge-role.rsd { background: #fd7e14; color: white; }
+        .badge-role.berger { background: #28a745; color: white; }
+        .badge-role.evangeliste { background: #20c997; color: white; }
+        .badge-role.leade { background: #0d6efd; color: white; }
+        .badge-role.anciens { background: #6c757d; color: white; }
+        .badge-role.rd { background: #e83e8c; color: white; }
+        .badge-role.soeur { background: #e83e8c; color: white; }
+
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .toast-custom {
+            background: var(--white);
+            border-left: 4px solid var(--success-green);
+            padding: 12px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        .spinner-custom {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--white);
+            border-top-color: var(--accent-yellow);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .modal-content { border-radius: 20px; }
+        .modal-header {
+            background: var(--primary-blue);
+            color: var(--white);
+            border-radius: 20px 20px 0 0;
+        }
+        .modal-header .btn-close { filter: brightness(0) invert(1); }
+
+        .input-group-text {
+            background: var(--primary-blue);
+            color: white;
+            border: 2px solid var(--primary-blue);
+            border-radius: 12px 0 0 12px;
+        }
+        .input-group .form-control {
+            border-radius: 0 12px 12px 0;
+        }
+
+        .affiche-preview {
+            display: none;
+            margin-top: 8px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #e0e0e0;
+            max-width: 200px;
+        }
+        .affiche-preview img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .affiche-preview .preview-label {
+            background: var(--primary-blue);
+            color: white;
+            text-align: center;
+            font-size: 0.65rem;
+            padding: 3px;
+            font-weight: 600;
+        }
+
+        .doc-thumbnail {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .doc-thumbnail:hover {
+            transform: scale(1.1);
+        }
+
+        .no-doc {
+            color: #ccc;
+            font-size: 1.2rem;
+        }
+
+        /* ===== MODALE DETAIL MEMBRE ===== */
+        .detail-member-header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue));
+            padding: 20px 24px;
+            border-radius: 20px 20px 0 0;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .detail-member-header .detail-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--accent-yellow);
+        }
+        .detail-member-header .detail-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        .detail-member-header .detail-role {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        .detail-member-header .detail-role .badge-role {
+            font-size: 0.75rem;
+        }
+
+        .detail-member-body {
+            padding: 20px 24px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .detail-grid .detail-item {
+            background: #f7f9fb;
+            border-radius: 10px;
+            padding: 10px 14px;
+            border: 1px solid #eef1f5;
+        }
+        .detail-grid .detail-item .label {
+            font-size: 0.6rem;
+            color: #888;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .detail-grid .detail-item .label i { margin-right: 4px; }
+        .detail-grid .detail-item .value {
+            font-size: 0.85rem;
+            color: var(--primary-blue);
+            font-weight: 500;
+        }
+        .detail-grid .detail-item.full-width { grid-column: 1 / -1; }
+
+        .detail-professions-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 2px;
+        }
+        .detail-professions-tags .tag {
+            padding: 2px 12px;
+            background: var(--primary-blue);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .detail-doc-preview {
+            margin-top: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #e0e0e0;
+            max-width: 300px;
+        }
+        .detail-doc-preview img {
+            width: 100%;
+            height: auto;
+            display: block;
+            cursor: pointer;
+        }
+
+        .detail-contact-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1.5px solid #eef1f5;
+        }
+        .detail-contact-buttons .btn {
+            border-radius: 20px;
+            padding: 6px 18px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: none;
+            transition: all 0.3s;
+        }
+        .detail-contact-buttons .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        .btn-whatsapp { background: #25D366; color: white; }
+        .btn-whatsapp:hover { background: #1da851; color: white; }
+        .btn-phone { background: #34B7F1; color: white; }
+        .btn-phone:hover { background: #1a9fd6; color: white; }
+        .btn-tiktok { background: #000000; color: white; }
+        .btn-tiktok:hover { background: #1a1a1a; color: white; }
+        .btn-doc { background: #dc3545; color: white; }
+        .btn-doc:hover { background: #c82333; color: white; }
+
+        .detail-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--success-green);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 576px) {
+            .buttons-grid { grid-template-columns: repeat(2, 1fr); }
+            .nav-btn { font-size: 0.65rem; padding: 8px 4px; }
+            .nav-btn i { font-size: 1.1rem; }
+            .user-profile span { display: none; }
+            .header-title { font-size: 0.9rem; }
+            .detail-grid { grid-template-columns: 1fr; }
+            .detail-member-header { flex-direction: column; text-align: center; }
+            .detail-contact-buttons { flex-direction: column; align-items: stretch; }
+            .detail-contact-buttons .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner-custom"></div>
+    </div>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- SECTION AUTH -->
+    <div id="authSection" class="auth-section">
+        <div class="auth-card">
+            <h2><i class="bi bi-shield-lock-fill"></i> Connexion Admin</h2>
+            <p class="text-muted text-center mb-4">Connectez-vous à l'espace d'administration</p>
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label class="form-label"><i class="bi bi-envelope-fill me-1"></i> Email</label>
+                    <input type="email" class="form-control" id="loginEmail" placeholder="admin@nac-business.org" required>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label"><i class="bi bi-lock-fill me-1"></i> Mot de passe</label>
+                    <input type="password" class="form-control" id="loginPassword" placeholder="Votre mot de passe" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-3">
+                    <span id="loginText"><i class="bi bi-box-arrow-in-right me-2"></i>Se connecter</span>
+                    <span id="loginSpinner" style="display: none;">Connexion...</span>
+                </button>
+            </form>
+            <div class="text-center mt-3">
+                <a href="index.html" class="text-primary" style="font-weight:600;text-decoration:none;">
+                    <i class="bi bi-person-plus me-1"></i>Créer un compte admin
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- INTERFACE PRINCIPALE -->
+    <div id="mainInterface" class="main-interface">
+        <header class="app-header">
+            <div class="header-title">
+                <i class="bi bi-briefcase-fill"></i> NAC-Business
+            </div>
+            <div class="user-profile" onclick="showProfileModal()">
+                <img id="headerProfileImg" src="https://res.cloudinary.com/diwn8sxtn/image/upload/v1/default_profile" alt="Photo">
+                <span id="headerUserName">Admin</span>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline-light btn-sm" onclick="logout()">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="buttons-grid">
+            <button class="nav-btn active" data-section="inscription"><i class="bi bi-person-plus-fill"></i><span>Inscription</span></button>
+            <button class="nav-btn" data-section="dashboard"><i class="bi bi-speedometer2"></i><span>Dashboard</span></button>
+            <button class="nav-btn" data-section="district"><i class="bi bi-map-fill"></i><span>District</span></button>
+            <button class="nav-btn" data-section="communautes"><i class="bi bi-people-fill"></i><span>Communauté</span></button>
+        </div>
+
+        <div class="content-area">
+            <!-- INSCRIPTION -->
+            <div id="inscriptionSection" class="content-section active">
+                <div class="section-card">
+                    <h2 class="section-title"><i class="bi bi-person-plus-fill"></i> Inscription d'un membre</h2>
+                    <form id="memberForm" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-image me-1"></i> Photo de profil</label>
+                                    <input type="file" class="form-control" id="memberPhoto" accept="image/*">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-image me-1"></i> Affiche / Document image</label>
+                                    <input type="file" class="form-control" id="memberDocument" accept="image/*">
+                                    <small class="text-muted">Champ non obligatoire - Téléchargez une image (affiche, CV scanné, etc.)</small>
+                                    <div class="affiche-preview" id="affichePreview">
+                                        <div class="preview-label"><i class="bi bi-image me-1"></i>Aperçu de l'affiche</div>
+                                        <img id="affichePreviewImg" src="" alt="Aperçu de l'affiche">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-person-fill me-1"></i> Nom complet *</label>
+                                    <input type="text" class="form-control" id="memberNom" placeholder="Ex: KALALA Jean-Marc" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-tag-fill me-1"></i> Responsabilité *</label>
+                                    <select class="form-select" id="memberResponsabilite" required>
+                                        <option value="">Sélectionner...</option>
+                                        <option value="frere">Frère</option>
+                                        <option value="soeur">Sœur</option>
+                                        <option value="diacre">Diacre</option>
+                                        <option value="pretre">Prêtre</option>
+                                        <option value="rsd">RSD</option>
+                                        <option value="berger">Berger</option>
+                                        <option value="evangeliste">Évangéliste</option>
+                                        <option value="leade">Leade</option>
+                                        <option value="anciens">Anciens</option>
+                                        <option value="rd">RD</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-geo-alt-fill me-1"></i> Champ apostolique *</label>
+                                    <select class="form-select" id="memberChamp" required>
+                                        <option value="">Sélectionner...</option>
+                                        <option value="Lubumbashi sud">Lubumbashi Sud</option>
+                                        <option value="Lubumbashi nord">Lubumbashi Nord</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-building-fill me-1"></i> District *</label>
+                                    <select class="form-select" id="memberDistrict" required>
+                                        <option value="">Sélectionner d'abord le champ</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-people-fill me-1"></i> Communauté *</label>
+                                    <select class="form-select" id="memberCommunaute" required>
+                                        <option value="">Sélectionner d'abord le district</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-calendar3 me-1"></i> Âge *</label>
+                                    <input type="number" class="form-control" id="memberAge" placeholder="Ex: 35" required min="18">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-gender-ambiguous me-1"></i> Genre *</label>
+                                    <select class="form-select" id="memberGenre" required>
+                                        <option value="">Sélectionner...</option>
+                                        <option value="Homme">Homme</option>
+                                        <option value="Femme">Femme</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-mortarboard-fill me-1"></i> Niveau d'études *</label>
+                                    <select class="form-select" id="memberEtudes" required>
+                                        <option value="">Sélectionner...</option>
+                                        <option value="eleve">Élève</option>
+                                        <option value="diplome_etat">Diplôme d'État</option>
+                                        <option value="etudiant_universitaire">Étudiant universitaire</option>
+                                        <option value="licence">Licence</option>
+                                        <option value="graduation">Graduation</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-briefcase-fill me-1"></i> Profession / Travail (max 3) *</label>
+                                    <input type="text" class="form-control" id="memberProfession" placeholder="Ex: Plombier, Électricien, Maçon">
+                                    <small class="text-muted">Séparez par des virgules (ex: Plombier, Électricien)</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-house-fill me-1"></i> Adresse (quartier) *</label>
+                                    <input type="text" class="form-control" id="memberAdresse" placeholder="Ex: Quartier Gambela" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-pin-map-fill me-1"></i> Adresse de référence *</label>
+                                    <input type="text" class="form-control" id="memberAdresseRef" placeholder="Ex: Avenue Kasa-Vubu, N°15" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-telephone-fill me-1"></i> Téléphone *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-globe2"></i></span>
+                                        <select class="form-select" id="memberPhoneCode" style="max-width: 100px; border-radius: 0;">
+                                            <option value="243">+243 (RDC)</option>
+                                            <option value="33">+33 (France)</option>
+                                            <option value="32">+32 (Belgique)</option>
+                                            <option value="1">+1 (USA/Canada)</option>
+                                            <option value="225">+225 (Côte d'Ivoire)</option>
+                                            <option value="221">+221 (Sénégal)</option>
+                                            <option value="237">+237 (Cameroun)</option>
+                                            <option value="212">+212 (Maroc)</option>
+                                            <option value="216">+216 (Tunisie)</option>
+                                            <option value="44">+44 (Royaume-Uni)</option>
+                                            <option value="49">+49 (Allemagne)</option>
+                                        </select>
+                                        <input type="tel" class="form-control" id="memberTelephone" placeholder="812345678" required>
+                                    </div>
+                                    <small class="text-muted">Indicatif + numéro sans le 0 initial</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-whatsapp me-1"></i> WhatsApp *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-globe2"></i></span>
+                                        <select class="form-select" id="memberWhatsappCode" style="max-width: 100px; border-radius: 0;">
+                                            <option value="243">+243 (RDC)</option>
+                                            <option value="33">+33 (France)</option>
+                                            <option value="32">+32 (Belgique)</option>
+                                            <option value="1">+1 (USA/Canada)</option>
+                                            <option value="225">+225 (Côte d'Ivoire)</option>
+                                            <option value="221">+221 (Sénégal)</option>
+                                            <option value="237">+237 (Cameroun)</option>
+                                            <option value="212">+212 (Maroc)</option>
+                                            <option value="216">+216 (Tunisie)</option>
+                                            <option value="44">+44 (Royaume-Uni)</option>
+                                            <option value="49">+49 (Allemagne)</option>
+                                        </select>
+                                        <input type="tel" class="form-control" id="memberWhatsapp" placeholder="812345678" required>
+                                    </div>
+                                    <small class="text-muted">Indicatif + numéro sans le 0 initial</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-tiktok me-1"></i> TikTok (optionnel)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-at"></i></span>
+                                        <input type="text" class="form-control" id="memberTiktok" placeholder="jeanmarc_kalala" 
+                                               oninput="formatTiktok(this)">
+                                    </div>
+                                    <small class="text-muted">Le @ et les _ sont automatiques</small>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-3">
+                            <span id="memberSubmitText"><i class="bi bi-save me-2"></i>Inscrire le membre</span>
+                            <span id="memberSubmitSpinner" style="display: none;">Inscription...</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Liste des membres -->
+                <div class="section-card">
+                    <h2 class="section-title"><i class="bi bi-list-ul"></i> Liste des membres</h2>
+                    <div class="table-responsive">
+                        <table class="table-custom" id="membersTable">
+                            <thead>
+                                <tr>
+                                    <th>Photo</th>
+                                    <th>Nom</th>
+                                    <th>Responsabilité</th>
+                                    <th>Profession</th>
+                                    <th>Affiche</th>
+                                    <th>Champ</th>
+                                    <th>District</th>
+                                    <th>Communauté</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="membersList">
+                                <tr><td colspan="9" class="text-center text-muted">Chargement...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DASHBOARD -->
+            <div id="dashboardSection" class="content-section">
+                <div class="section-card">
+                    <h2 class="section-title"><i class="bi bi-speedometer2"></i> Dashboard</h2>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3 col-6">
+                            <div class="card text-center p-3" style="border-left: 4px solid var(--primary-blue);">
+                                <h3 id="statTotal" class="text-primary">0</h3>
+                                <p class="text-muted mb-0">Total membres</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="card text-center p-3" style="border-left: 4px solid var(--success-green);">
+                                <h3 id="statProfessions" class="text-success">0</h3>
+                                <p class="text-muted mb-0">Professions uniques</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="card text-center p-3" style="border-left: 4px solid var(--accent-yellow);">
+                                <h3 id="statDistricts" class="text-warning">0</h3>
+                                <p class="text-muted mb-0">Districts</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="card text-center p-3" style="border-left: 4px solid var(--info-blue);">
+                                <h3 id="statCommunautes" class="text-info">0</h3>
+                                <p class="text-muted mb-0">Communautés</p>
+                            </div>
+                        </div>
+                    </div>
+                    <canvas id="dashboardChart" style="max-height: 300px; width: 100%;"></canvas>
+                </div>
+            </div>
+
+            <!-- DISTRICT -->
+            <div id="districtSection" class="content-section">
+                <div class="section-card">
+                    <h2 class="section-title"><i class="bi bi-map-fill"></i> Créer un district</h2>
+                    <form id="districtForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-tag-fill me-1"></i> Nom du district *</label>
+                                    <input type="text" class="form-control" id="districtNom" placeholder="Ex: District de Kamanyola" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-geo-alt-fill me-1"></i> Champ apostolique *</label>
+                                    <select class="form-select" id="districtChamp" required>
+                                        <option value="">Sélectionner...</option>
+                                        <option value="Lubumbashi sud">Lubumbashi Sud</option>
+                                        <option value="Lubumbashi nord">Lubumbashi Nord</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-2">
+                            <span id="districtSubmitText"><i class="bi bi-plus-circle me-2"></i>Créer le district</span>
+                            <span id="districtSubmitSpinner" style="display: none;">Création...</span>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="section-card">
+                    <h2 class="section-title"><i class="bi bi-list-ul"></i> Liste des districts</h2>
+                    <div class="table-responsive">
+                        <table class="table-custom">
+                            <thead><tr><th>Nom</th><th>Champ apostolique</th><th>Date création</th></tr></thead>
+                            <tbody id="districtsList"><tr><td colspan="3" class="text-center text-muted">Chargement...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COMMUNAUTÉS -->
+            <div id="communautesSection" class="content-section">
+                <div class="section-card">
+                    <h2 class="section-title"><i class="bi bi-people-fill"></i> Créer une communauté</h2>
+                    <form id="communauteForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-tag-fill me-1"></i> Nom de la communauté *</label>
+                                    <input type="text" class="form-control" id="communauteNom" placeholder="Ex: Communauté de la Paix" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-geo-alt-fill me-1"></i> Champ apostolique *</label>
+                                    <select class="form-select" id="communauteChamp" required>
+                                        <option value="">Sélectionner...</option>
+                                        <option value="Lubumbashi sud">Lubumbashi Sud</option>
+                                        <option value="Lubumbashi nord">Lubumbashi Nord</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-map-fill me-1"></i> District *</label>
+                                    <select class="form-select" id="communauteDistrict" required>
+                                        <option value="">Sélectionner d'abord le champ</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-2">
+                            <span id="communauteSubmitText"><i class="bi bi-plus-circle me-2"></i>Créer la communauté</span>
+                            <span id="communauteSubmitSpinner" style="display: none;">Création...</span>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="section-card">
+                    <h2 class="section-title"><i class="bi bi-list-ul"></i> Liste des communautés</h2>
+                    <div class="table-responsive">
+                        <table class="table-custom">
+                            <thead><tr><th>Nom</th><th>Champ</th><th>District</th><th>Date création</th></tr></thead>
+                            <tbody id="communautesList"><tr><td colspan="4" class="text-center text-muted">Chargement...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODALE PROFIL ===== -->
+    <div class="modal fade" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Mon profil</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <img id="modalProfileImg" src="" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-yellow);">
+                    </div>
+                    <form id="profileForm">
+                        <div class="mb-3">
+                            <label class="form-label">Photo de profil</label>
+                            <input type="file" class="form-control" id="profilePhotoInput" accept="image/*">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nom complet</label>
+                            <input type="text" class="form-control" id="profileNom" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="text" class="form-control" id="profileEmail" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nouveau mot de passe</label>
+                            <input type="password" class="form-control" id="profileNewPassword" placeholder="Laisser vide pour ne pas changer">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-primary" onclick="updateProfile()">Mettre à jour</button>
+                    <button type="button" class="btn btn-danger" onclick="logout()">Déconnexion</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODALE DETAIL MEMBRE ===== -->
+    <div class="modal fade" id="detailMemberModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-badge me-2"></i>Détail du membre</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="detail-member-header">
+                    <img id="detailAvatar" class="detail-avatar" src="" alt="Photo">
+                    <div>
+                        <div class="detail-name" id="detailNom">-</div>
+                        <div class="detail-role">
+                            <span class="badge-role" id="detailBadgeRole">-</span>
+                            <span style="margin-left:12px;"><i class="bi bi-geo-alt-fill"></i> <span id="detailChampDistrict">-</span></span>
+                        </div>
+                        <div class="detail-status mt-2">
+                            <i class="bi bi-check-circle-fill"></i> Membre actif
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-member-body">
+                    <div class="detail-grid" id="detailGrid"></div>
+
+                    <div id="detailDocSection" style="display:none; margin-top:12px;">
+                        <div style="font-size:0.7rem; font-weight:600; color:var(--primary-blue); text-transform:uppercase; margin-bottom:4px;">
+                            <i class="bi bi-image me-1"></i> Affiche / Document
+                        </div>
+                        <div class="detail-doc-preview" id="detailDocPreview">
+                            <img id="detailDocImg" src="" alt="Affiche" onclick="viewFullAffiche()">
+                        </div>
+                    </div>
+
+                    <div class="detail-contact-buttons" id="detailContactButtons"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODALE MODIFIER MEMBRE ===== -->
+    <div class="modal fade" id="editMemberModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-pencil-square me-2"></i>Modifier le membre</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editMemberForm">
+                        <input type="hidden" id="editMemberId">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-person-fill me-1"></i> Nom complet *</label>
+                                    <input type="text" class="form-control" id="editNom" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-tag-fill me-1"></i> Responsabilité *</label>
+                                    <select class="form-select" id="editResponsabilite" required>
+                                        <option value="">Sélectionner...</option>
+                                        <option value="frere">Frère</option>
+                                        <option value="soeur">Sœur</option>
+                                        <option value="diacre">Diacre</option>
+                                        <option value="pretre">Prêtre</option>
+                                        <option value="rsd">RSD</option>
+                                        <option value="berger">Berger</option>
+                                        <option value="evangeliste">Évangéliste</option>
+                                        <option value="leade">Leade</option>
+                                        <option value="anciens">Anciens</option>
+                                        <option value="rd">RD</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-geo-alt-fill me-1"></i> Champ apostolique *</label>
+                                    <select class="form-select" id="editChamp" required>
+                                        <option value="">Sélectionner...</option>
+                                        <option value="Lubumbashi sud">Lubumbashi Sud</option>
+                                        <option value="Lubumbashi nord">Lubumbashi Nord</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-building-fill me-1"></i> District *</label>
+                                    <select class="form-select" id="editDistrict" required>
+                                        <option value="">Sélectionner d'abord le champ</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-people-fill me-1"></i> Communauté *</label>
+                                    <select class="form-select" id="editCommunaute" required>
+                                        <option value="">Sélectionner d'abord le district</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-calendar3 me-1"></i> Âge *</label>
+                                    <input type="number" class="form-control" id="editAge" required min="18">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-gender-ambiguous me-1"></i> Genre *</label>
+                                    <select class="form-select" id="editGenre" required>
+                                        <option value="">Sélectionner...</option>
+                                        <option value="Homme">Homme</option>
+                                        <option value="Femme">Femme</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-mortarboard-fill me-1"></i> Niveau d'études *</label>
+                                    <select class="form-select" id="editEtudes" required>
+                                        <option value="">Sélectionner...</option>
+                                        <option value="eleve">Élève</option>
+                                        <option value="diplome_etat">Diplôme d'État</option>
+                                        <option value="etudiant_universitaire">Étudiant universitaire</option>
+                                        <option value="licence">Licence</option>
+                                        <option value="graduation">Graduation</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-briefcase-fill me-1"></i> Profession / Travail *</label>
+                                    <input type="text" class="form-control" id="editProfession" placeholder="Ex: Plombier, Électricien, Maçon">
+                                    <small class="text-muted">Séparez par des virgules</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-house-fill me-1"></i> Adresse (quartier) *</label>
+                                    <input type="text" class="form-control" id="editAdresse" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-pin-map-fill me-1"></i> Adresse de référence *</label>
+                                    <input type="text" class="form-control" id="editAdresseRef" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-image me-1"></i> Nouvelle affiche</label>
+                                    <input type="file" class="form-control" id="editDocument" accept="image/*">
+                                    <small class="text-muted">Laissez vide pour conserver l'affiche actuelle</small>
+                                    <div id="editAffichePreview" style="margin-top:8px; display:none;">
+                                        <img id="editAffichePreviewImg" src="" style="max-width:150px; border-radius:8px; border:2px solid #ddd;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-telephone-fill me-1"></i> Téléphone *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-globe2"></i></span>
+                                        <select class="form-select" id="editPhoneCode" style="max-width: 100px; border-radius: 0;">
+                                            <option value="243">+243 (RDC)</option>
+                                            <option value="33">+33 (France)</option>
+                                            <option value="32">+32 (Belgique)</option>
+                                            <option value="1">+1 (USA/Canada)</option>
+                                            <option value="225">+225 (Côte d'Ivoire)</option>
+                                            <option value="221">+221 (Sénégal)</option>
+                                            <option value="237">+237 (Cameroun)</option>
+                                            <option value="212">+212 (Maroc)</option>
+                                            <option value="216">+216 (Tunisie)</option>
+                                            <option value="44">+44 (Royaume-Uni)</option>
+                                            <option value="49">+49 (Allemagne)</option>
+                                        </select>
+                                        <input type="tel" class="form-control" id="editTelephone" placeholder="812345678" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-whatsapp me-1"></i> WhatsApp *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-globe2"></i></span>
+                                        <select class="form-select" id="editWhatsappCode" style="max-width: 100px; border-radius: 0;">
+                                            <option value="243">+243 (RDC)</option>
+                                            <option value="33">+33 (France)</option>
+                                            <option value="32">+32 (Belgique)</option>
+                                            <option value="1">+1 (USA/Canada)</option>
+                                            <option value="225">+225 (Côte d'Ivoire)</option>
+                                            <option value="221">+221 (Sénégal)</option>
+                                            <option value="237">+237 (Cameroun)</option>
+                                            <option value="212">+212 (Maroc)</option>
+                                            <option value="216">+216 (Tunisie)</option>
+                                            <option value="44">+44 (Royaume-Uni)</option>
+                                            <option value="49">+49 (Allemagne)</option>
+                                        </select>
+                                        <input type="tel" class="form-control" id="editWhatsapp" placeholder="812345678" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-tiktok me-1"></i> TikTok (optionnel)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-at"></i></span>
+                                        <input type="text" class="form-control" id="editTiktok" placeholder="jeanmarc_kalala"
+                                               oninput="formatTiktok(this)">
+                                    </div>
+                                    <small class="text-muted">Le @ et les _ sont automatiques</small>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 py-3">
+                            <span id="editSubmitText"><i class="bi bi-save me-2"></i>Enregistrer les modifications</span>
+                            <span id="editSubmitSpinner" style="display: none;">Enregistrement...</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase + Chart.js -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <script>
+        // ===== CONFIGURATION FIREBASE =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyBasZlBNzWyUT7mujoXfjoOhY_gFDlYCvA",
+            authDomain: "theovet-gestion.firebaseapp.com",
+            databaseURL: "https://theovet-gestion-default-rtdb.firebaseio.com",
+            projectId: "theovet-gestion",
+            storageBucket: "theovet-gestion.firebasestorage.app",
+            messagingSenderId: "741805895445",
+            appId: "1:741805895445:web:31ea2d95b329a55b79831c",
+            measurementId: "G-EP0ZQBBNEY"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        const CLOUDINARY_CONFIG = {
+            cloudName: 'diwn8sxtn',
+            uploadPreset: 'cs_lacolombe'
+        };
+
+        let currentAdmin = null;
+        let allMembers = [];
+        let chartInstance = null;
+        let currentDocUrl = '';
+
+        // ===== FONCTIONS UTILITAIRES =====
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast-custom';
+            toast.style.borderLeftColor = type === 'success' ? '#28a745' : '#dc3545';
+            const icon = type === 'success' ? 'bi-check-circle' : 'bi-exclamation-triangle';
+            toast.innerHTML = `<i class="bi ${icon} me-2"></i>${message}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+
+        function showLoading(visible) {
+            document.getElementById('loadingOverlay').style.display = visible ? 'flex' : 'none';
+        }
+
+        async function uploadToCloudinary(file) {
+            const fd = new FormData();
+            fd.append('file', file);
+            fd.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/upload`, { method: 'POST', body: fd });
+            const data = await res.json();
+            return data.secure_url;
+        }
+
+        function getRoleClass(responsabilite) {
+            const map = {
+                'frere': 'frere',
+                'soeur': 'soeur',
+                'diacre': 'diacre',
+                'pretre': 'pretre',
+                'rsd': 'rsd',
+                'berger': 'berger',
+                'evangeliste': 'evangeliste',
+                'leade': 'leade',
+                'anciens': 'anciens',
+                'rd': 'rd'
+            };
+            return map[responsabilite] || 'frere';
+        }
+
+        function getRoleLabel(responsabilite) {
+            const map = {
+                'frere': 'Frère',
+                'soeur': 'Sœur',
+                'diacre': 'Diacre',
+                'pretre': 'Prêtre',
+                'rsd': 'RSD',
+                'berger': 'Berger',
+                'evangeliste': 'Évangéliste',
+                'leade': 'Leade',
+                'anciens': 'Anciens',
+                'rd': 'RD'
+            };
+            return map[responsabilite] || responsabilite || 'N/A';
+        }
+
+        function getRolePrefix(responsabilite) {
+            const map = {
+                'frere': 'Fr. ',
+                'soeur': 'Sr. ',
+                'diacre': 'Dcr. ',
+                'pretre': 'Pr. ',
+                'rsd': 'RSD ',
+                'berger': 'Berg. ',
+                'evangeliste': 'Évang. ',
+                'leade': 'Ld. ',
+                'anciens': 'Anc. ',
+                'rd': 'RD '
+            };
+            return map[responsabilite] || '';
+        }
+
+        // ===== FORMATAGE INTELLIGENT TIKTOK =====
+        window.formatTiktok = function(input) {
+            let value = input.value.trim();
+            if (!value) return;
+            
+            if (value.includes('tiktok.com/')) {
+                const parts = value.split('tiktok.com/');
+                value = parts[parts.length - 1];
+                if (value.startsWith('@')) {
+                    value = value.substring(1);
+                }
+                value = value.split('/')[0].split('?')[0];
+            }
+            
+            if (value.startsWith('@')) {
+                value = value.substring(1);
+            }
+            
+            value = value.replace(/ /g, '_');
+            value = value.replace(/[^a-zA-Z0-9._-]/g, '');
+            value = value.replace(/_+/g, '_');
+            value = value.replace(/-+/g, '-');
+            value = value.replace(/\.+/g, '.');
+            value = value.replace(/^[_\-.]/, '');
+            value = value.replace(/[_\-.]$/, '');
+            value = value.toLowerCase();
+            
+            input.value = value;
+        };
+
+        function cleanPhoneNumber(phone) {
+            if (!phone) return '';
+            return phone.replace(/\D/g, '');
+        }
+
+        function buildFullNumber(code, number) {
+            const clean = cleanPhoneNumber(number);
+            if (!clean) return '';
+            return code + clean;
+        }
+
+        // ===== APERÇU DE L'AFFICHE =====
+        document.getElementById('memberDocument')?.addEventListener('change', function(e) {
+            const preview = document.getElementById('affichePreview');
+            const img = document.getElementById('affichePreviewImg');
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    img.src = ev.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+                img.src = '';
+            }
+        });
+
+        document.getElementById('editDocument')?.addEventListener('change', function(e) {
+            const preview = document.getElementById('editAffichePreview');
+            const img = document.getElementById('editAffichePreviewImg');
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    img.src = ev.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+                img.src = '';
+            }
+        });
+
+        // ===== NAVIGATION =====
+        document.querySelectorAll('.nav-btn[data-section]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const section = btn.dataset.section;
+                document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+                document.getElementById(section + 'Section').classList.add('active');
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                if (section === 'dashboard') loadDashboard();
+                if (section === 'district') loadDistricts();
+                if (section === 'communautes') loadCommunautes();
+                if (section === 'inscription') loadMembers();
+            });
+        });
+
+        // ===== CONNEXION =====
+        document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            document.getElementById('loginText').style.display = 'none';
+            document.getElementById('loginSpinner').style.display = 'inline-block';
+            showLoading(true);
+
+            try {
+                const cred = await auth.signInWithEmailAndPassword(email, password);
+                const adminDoc = await db.collection('admins').doc(cred.user.uid).get();
+                if (!adminDoc.exists || adminDoc.data().role !== 'admin') {
+                    await auth.signOut();
+                    throw new Error('Vous n\'êtes pas autorisé comme administrateur.');
+                }
+                currentAdmin = { uid: cred.user.uid, ...adminDoc.data() };
+                localStorage.setItem('currentAdmin', JSON.stringify(currentAdmin));
+                showMainInterface();
+            } catch (error) {
+                showToast('❌ ' + error.message, 'error');
+                document.getElementById('loginText').style.display = 'inline-block';
+                document.getElementById('loginSpinner').style.display = 'none';
+                showLoading(false);
+            }
+        });
+
+        function showMainInterface() {
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('mainInterface').style.display = 'block';
+            document.getElementById('headerUserName').textContent = currentAdmin.nomComplet || 'Admin';
+            if (currentAdmin.photo) document.getElementById('headerProfileImg').src = currentAdmin.photo;
+            loadMembers();
+            loadDistricts();
+            loadCommunautes();
+            loadDashboard();
+        }
+
+        window.logout = async () => {
+            await auth.signOut();
+            localStorage.removeItem('currentAdmin');
+            window.location.reload();
+        };
+
+        // ===== PROFIL =====
+        window.showProfileModal = () => {
+            const modal = new bootstrap.Modal(document.getElementById('profileModal'));
+            document.getElementById('modalProfileImg').src = currentAdmin.photo || 'https://res.cloudinary.com/diwn8sxtn/image/upload/v1/default_profile';
+            document.getElementById('profileNom').value = currentAdmin.nomComplet || '';
+            document.getElementById('profileEmail').value = currentAdmin.email || '';
+            modal.show();
+        };
+
+        window.updateProfile = async () => {
+            const photoFile = document.getElementById('profilePhotoInput').files[0];
+            if (photoFile) {
+                showLoading(true);
+                const url = await uploadToCloudinary(photoFile);
+                await db.collection('admins').doc(currentAdmin.uid).update({ photo: url });
+                currentAdmin.photo = url;
+                document.getElementById('headerProfileImg').src = url;
+                showLoading(false);
+            }
+            const newPwd = document.getElementById('profileNewPassword').value;
+            if (newPwd && auth.currentUser) {
+                await auth.currentUser.updatePassword(newPwd);
+                showToast('Mot de passe mis à jour', 'success');
+            }
+            localStorage.setItem('currentAdmin', JSON.stringify(currentAdmin));
+            showToast('Profil mis à jour', 'success');
+            bootstrap.Modal.getInstance(document.getElementById('profileModal')).hide();
+        };
+
+        // ===== FILTRES =====
+        document.getElementById('memberChamp')?.addEventListener('change', async function() {
+            const champ = this.value;
+            const districtSelect = document.getElementById('memberDistrict');
+            districtSelect.innerHTML = '<option value="">Sélectionner...</option>';
+            document.getElementById('memberCommunaute').innerHTML = '<option value="">Sélectionner d\'abord le district</option>';
+            if (!champ) return;
+            const snapshot = await db.collection('districts').where('champ', '==', champ).get();
+            snapshot.forEach(doc => {
+                const d = doc.data();
+                const opt = document.createElement('option');
+                opt.value = d.nom;
+                opt.textContent = d.nom;
+                districtSelect.appendChild(opt);
+            });
+        });
+
+        document.getElementById('memberDistrict')?.addEventListener('change', async function() {
+            const district = this.value;
+            const champ = document.getElementById('memberChamp').value;
+            const commSelect = document.getElementById('memberCommunaute');
+            commSelect.innerHTML = '<option value="">Sélectionner...</option>';
+            if (!district || !champ) return;
+            const snapshot = await db.collection('communautes')
+                .where('district', '==', district)
+                .where('champ', '==', champ)
+                .get();
+            snapshot.forEach(doc => {
+                const c = doc.data();
+                const opt = document.createElement('option');
+                opt.value = c.nom;
+                opt.textContent = c.nom;
+                commSelect.appendChild(opt);
+            });
+        });
+
+        document.getElementById('communauteChamp')?.addEventListener('change', async function() {
+            const champ = this.value;
+            const districtSelect = document.getElementById('communauteDistrict');
+            districtSelect.innerHTML = '<option value="">Sélectionner...</option>';
+            if (!champ) return;
+            const snapshot = await db.collection('districts').where('champ', '==', champ).get();
+            snapshot.forEach(doc => {
+                const d = doc.data();
+                const opt = document.createElement('option');
+                opt.value = d.nom;
+                opt.textContent = d.nom;
+                districtSelect.appendChild(opt);
+            });
+        });
+
+        // ===== FILTRES MODAL MODIFICATION =====
+        document.getElementById('editChamp')?.addEventListener('change', async function() {
+            const champ = this.value;
+            const districtSelect = document.getElementById('editDistrict');
+            districtSelect.innerHTML = '<option value="">Sélectionner...</option>';
+            document.getElementById('editCommunaute').innerHTML = '<option value="">Sélectionner d\'abord le district</option>';
+            if (!champ) return;
+            const snapshot = await db.collection('districts').where('champ', '==', champ).get();
+            snapshot.forEach(doc => {
+                const d = doc.data();
+                const opt = document.createElement('option');
+                opt.value = d.nom;
+                opt.textContent = d.nom;
+                districtSelect.appendChild(opt);
+            });
+        });
+
+        document.getElementById('editDistrict')?.addEventListener('change', async function() {
+            const district = this.value;
+            const champ = document.getElementById('editChamp').value;
+            const commSelect = document.getElementById('editCommunaute');
+            commSelect.innerHTML = '<option value="">Sélectionner...</option>';
+            if (!district || !champ) return;
+            const snapshot = await db.collection('communautes')
+                .where('district', '==', district)
+                .where('champ', '==', champ)
+                .get();
+            snapshot.forEach(doc => {
+                const c = doc.data();
+                const opt = document.createElement('option');
+                opt.value = c.nom;
+                opt.textContent = c.nom;
+                commSelect.appendChild(opt);
+            });
+        });
+
+        // ===== CRÉATION DISTRICT =====
+        document.getElementById('districtForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nom = document.getElementById('districtNom').value.trim();
+            const champ = document.getElementById('districtChamp').value;
+
+            if (!nom || !champ) { showToast('Veuillez remplir tous les champs', 'error'); return; }
+
+            document.getElementById('districtSubmitText').style.display = 'none';
+            document.getElementById('districtSubmitSpinner').style.display = 'inline-block';
+            showLoading(true);
+
+            try {
+                await db.collection('districts').add({
+                    nom: nom,
+                    champ: champ,
+                    dateCreation: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showToast('✅ District créé avec succès', 'success');
+                document.getElementById('districtForm').reset();
+                loadDistricts();
+            } catch (error) {
+                showToast('❌ ' + error.message, 'error');
+            }
+            document.getElementById('districtSubmitText').style.display = 'inline-block';
+            document.getElementById('districtSubmitSpinner').style.display = 'none';
+            showLoading(false);
+        });
+
+        // ===== CRÉATION COMMUNAUTÉ =====
+        document.getElementById('communauteForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nom = document.getElementById('communauteNom').value.trim();
+            const champ = document.getElementById('communauteChamp').value;
+            const district = document.getElementById('communauteDistrict').value;
+
+            if (!nom || !champ || !district) { showToast('Veuillez remplir tous les champs', 'error'); return; }
+
+            document.getElementById('communauteSubmitText').style.display = 'none';
+            document.getElementById('communauteSubmitSpinner').style.display = 'inline-block';
+            showLoading(true);
+
+            try {
+                await db.collection('communautes').add({
+                    nom: nom,
+                    champ: champ,
+                    district: district,
+                    dateCreation: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                showToast('✅ Communauté créée avec succès', 'success');
+                document.getElementById('communauteForm').reset();
+                document.getElementById('communauteDistrict').innerHTML = '<option value="">Sélectionner d\'abord le champ</option>';
+                loadCommunautes();
+            } catch (error) {
+                showToast('❌ ' + error.message, 'error');
+            }
+            document.getElementById('communauteSubmitText').style.display = 'inline-block';
+            document.getElementById('communauteSubmitSpinner').style.display = 'none';
+            showLoading(false);
+        });
+
+        // ===== CRÉATION MEMBRE =====
+        document.getElementById('memberForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const nom = document.getElementById('memberNom').value.trim();
+            const responsabilite = document.getElementById('memberResponsabilite').value;
+            const champ = document.getElementById('memberChamp').value;
+            const district = document.getElementById('memberDistrict').value;
+            const communaute = document.getElementById('memberCommunaute').value;
+            const age = parseInt(document.getElementById('memberAge').value);
+            const genre = document.getElementById('memberGenre').value;
+            const etudes = document.getElementById('memberEtudes').value;
+            const professionRaw = document.getElementById('memberProfession').value.trim();
+            const adresse = document.getElementById('memberAdresse').value.trim();
+            const adresseRef = document.getElementById('memberAdresseRef').value.trim();
+
+            const phoneCode = document.getElementById('memberPhoneCode').value;
+            const phoneNumber = document.getElementById('memberTelephone').value.trim();
+            const whatsappCode = document.getElementById('memberWhatsappCode').value;
+            const whatsappNumber = document.getElementById('memberWhatsapp').value.trim();
+            let tiktok = document.getElementById('memberTiktok').value.trim();
+
+            const photoFile = document.getElementById('memberPhoto').files[0];
+            const docFile = document.getElementById('memberDocument').files[0];
+
+            if (!nom || !responsabilite || !champ || !district || !communaute || !age || !genre || !etudes || !adresse || !adresseRef || !phoneNumber || !whatsappNumber) {
+                showToast('Veuillez remplir tous les champs obligatoires', 'error');
+                return;
+            }
+
+            const professions = professionRaw ? professionRaw.split(',').map(p => p.trim()).filter(p => p) : [];
+
+            if (tiktok) {
+                tiktok = tiktok.replace(/\s/g, '');
+                if (tiktok.startsWith('@')) {
+                    tiktok = tiktok.substring(1);
+                }
+                tiktok = tiktok.replace(/ /g, '_');
+                tiktok = tiktok.replace(/[^a-zA-Z0-9._-]/g, '');
+                tiktok = tiktok.toLowerCase();
+            }
+
+            const fullPhone = buildFullNumber(phoneCode, phoneNumber);
+            const fullWhatsapp = buildFullNumber(whatsappCode, whatsappNumber);
+
+            document.getElementById('memberSubmitText').style.display = 'none';
+            document.getElementById('memberSubmitSpinner').style.display = 'inline-block';
+            showLoading(true);
+
+            try {
+                let photoUrl = 'https://res.cloudinary.com/diwn8sxtn/image/upload/v1/default_profile';
+                if (photoFile) {
+                    photoUrl = await uploadToCloudinary(photoFile);
+                }
+
+                let docUrl = null;
+                if (docFile) {
+                    docUrl = await uploadToCloudinary(docFile);
+                }
+
+                const prefix = getRolePrefix(responsabilite);
+                const nomComplet = prefix + nom;
+
+                await db.collection('membres').add({
+                    nom: nomComplet,
+                    nomOriginal: nom,
+                    responsabilite: responsabilite,
+                    champ: champ,
+                    district: district,
+                    communaute: communaute,
+                    age: age,
+                    genre: genre,
+                    niveauEtudes: etudes,
+                    professions: professions,
+                    adresse: adresse,
+                    adresseRef: adresseRef,
+                    telephone: fullPhone,
+                    whatsapp: fullWhatsapp,
+                    tiktok: tiktok,
+                    photo: photoUrl,
+                    document: docUrl,
+                    dateInscription: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                showToast('✅ Membre inscrit avec succès', 'success');
+                document.getElementById('memberForm').reset();
+                document.getElementById('affichePreview').style.display = 'none';
+                document.getElementById('affichePreviewImg').src = '';
+                document.getElementById('memberDistrict').innerHTML = '<option value="">Sélectionner d\'abord le champ</option>';
+                document.getElementById('memberCommunaute').innerHTML = '<option value="">Sélectionner d\'abord le district</option>';
+                loadMembers();
+                loadDashboard();
+
+            } catch (error) {
+                showToast('❌ ' + error.message, 'error');
+            }
+
+            document.getElementById('memberSubmitText').style.display = 'inline-block';
+            document.getElementById('memberSubmitSpinner').style.display = 'none';
+            showLoading(false);
+        });
+
+        // ===== CHARGER LES MEMBRES =====
+        async function loadMembers() {
+            const tbody = document.getElementById('membersList');
+            tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted">Chargement...</td></tr>';
+
+            try {
+                const snapshot = await db.collection('membres').orderBy('dateInscription', 'desc').get();
+                allMembers = [];
+                let html = '';
+
+                snapshot.forEach(doc => {
+                    const m = doc.data();
+                    const id = doc.id;
+                    allMembers.push({ id, ...m });
+
+                    const roleClass = m.responsabilite || 'frere';
+                    const roleLabel = getRoleLabel(m.responsabilite);
+                    
+                    let docHtml = '';
+                    if (m.document) {
+                        docHtml = `<img src="${m.document}" class="doc-thumbnail" onclick="event.stopPropagation(); viewAffiche('${m.document}')" title="Cliquez pour agrandir">`;
+                    } else {
+                        docHtml = '<span class="no-doc"><i class="bi bi-image"></i></span>';
+                    }
+
+                    html += `<tr>
+                        <td><img src="${m.photo || 'https://res.cloudinary.com/diwn8sxtn/image/upload/v1/default_profile'}" alt="photo"></td>
+                        <td><strong>${m.nom || 'N/A'}</strong></td>
+                        <td><span class="badge-role ${roleClass}">${roleLabel}</span></td>
+                        <td>${m.professions ? m.professions.join(', ') : '-'}</td>
+                        <td style="text-align:center;">${docHtml}</td>
+                        <td>${m.champ || '-'}</td>
+                        <td>${m.district || '-'}</td>
+                        <td>${m.communaute || '-'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewMemberDetail('${id}')"><i class="bi bi-eye"></i></button>
+                            <button class="btn btn-sm btn-warning" onclick="openEditModal('${id}')"><i class="bi bi-pencil" style="color:var(--primary-blue);"></i></button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteMember('${id}')"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>`;
+                });
+
+                tbody.innerHTML = html || '<tr><td colspan="9" class="text-center text-muted">Aucun membre inscrit</td></tr>';
+
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="9" class="text-center text-danger">Erreur de chargement</td></tr>';
+            }
+        }
+
+        // ===== VIEW AFFICHE =====
+        window.viewAffiche = function(url) {
+            window.open(url, '_blank');
+        };
+
+        // ===== VIEW FULL AFFICHE DEPUIS LA MODALE =====
+        window.viewFullAffiche = function() {
+            if (currentDocUrl) {
+                window.open(currentDocUrl, '_blank');
+            }
+        };
+
+        // ===== VIEW MEMBER DETAIL (INTERFACE PROPRE) =====
+        window.viewMemberDetail = function(id) {
+            const member = allMembers.find(m => m.id === id);
+            if (!member) {
+                showToast('❌ Membre non trouvé', 'error');
+                return;
+            }
+
+            const modal = new bootstrap.Modal(document.getElementById('detailMemberModal'));
+            
+            // Header
+            document.getElementById('detailAvatar').src = member.photo || 'https://res.cloudinary.com/diwn8sxtn/image/upload/v1/default_profile';
+            document.getElementById('detailNom').textContent = member.nom || 'N/A';
+            
+            const roleClass = getRoleClass(member.responsabilite);
+            const roleLabel = getRoleLabel(member.responsabilite);
+            const badge = document.getElementById('detailBadgeRole');
+            badge.textContent = roleLabel;
+            badge.className = `badge-role ${roleClass}`;
+            
+            const champDistrict = `${member.champ || ''} ${member.district ? '· ' + member.district : ''}`;
+            document.getElementById('detailChampDistrict').textContent = champDistrict || 'N/A';
+
+            // Grid des informations
+            const grid = document.getElementById('detailGrid');
+            const professionsHtml = member.professions && member.professions.length > 0
+                ? member.professions.map(p => `<span class="tag">${p}</span>`).join(' ')
+                : 'Non renseigné';
+
+            const tiktokDisplay = member.tiktok ? (member.tiktok.startsWith('@') ? member.tiktok : '@' + member.tiktok) : 'Non renseigné';
+
+            grid.innerHTML = `
+                <div class="detail-item">
+                    <span class="label"><i class="bi bi-geo-alt"></i> Champ</span>
+                    <span class="value">${member.champ || 'N/A'}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label"><i class="bi bi-map"></i> District</span>
+                    <span class="value">${member.district || 'N/A'}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label"><i class="bi bi-people"></i> Communauté</span>
+                    <span class="value">${member.communaute || 'N/A'}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label"><i class="bi bi-calendar3"></i> Âge</span>
+                    <span class="value">${member.age || 'N/A'} ans</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label"><i class="bi bi-gender-ambiguous"></i> Genre</span>
+                    <span class="value">${member.genre || 'N/A'}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label"><i class="bi bi-mortarboard"></i> Niveau</span>
+                    <span class="value">${member.niveauEtudes || 'N/A'}</span>
+                </div>
+                <div class="detail-item full-width">
+                    <span class="label"><i class="bi bi-briefcase"></i> Professions</span>
+                    <div class="detail-professions-tags">${professionsHtml}</div>
+                </div>
+                <div class="detail-item full-width">
+                    <span class="label"><i class="bi bi-house"></i> Adresse</span>
+                    <span class="value">${member.adresse || 'N/A'}</span>
+                </div>
+                <div class="detail-item full-width">
+                    <span class="label"><i class="bi bi-pin-map"></i> Référence</span>
+                    <span class="value">${member.adresseRef || 'N/A'}</span>
+                </div>
+                <div class="detail-item full-width">
+                    <span class="label"><i class="bi bi-telephone"></i> Téléphone</span>
+                    <span class="value">${member.telephone || 'N/A'}</span>
+                </div>
+                <div class="detail-item full-width">
+                    <span class="label"><i class="bi bi-whatsapp"></i> WhatsApp</span>
+                    <span class="value">${member.whatsapp || 'N/A'}</span>
+                </div>
+                <div class="detail-item full-width">
+                    <span class="label"><i class="bi bi-tiktok"></i> TikTok</span>
+                    <span class="value">${tiktokDisplay}</span>
+                </div>
+            `;
+
+            // Document / Affiche
+            const docSection = document.getElementById('detailDocSection');
+            const docImg = document.getElementById('detailDocImg');
+            if (member.document) {
+                currentDocUrl = member.document;
+                docSection.style.display = 'block';
+                docImg.src = member.document;
+            } else {
+                currentDocUrl = '';
+                docSection.style.display = 'none';
+                docImg.src = '';
+            }
+
+            // Boutons de contact
+            const contactDiv = document.getElementById('detailContactButtons');
+            const whatsappNumber = cleanPhoneNumber(member.whatsapp);
+            const whatsappLink = whatsappNumber ? `https://wa.me/${whatsappNumber}` : null;
+            const phoneNumber = cleanPhoneNumber(member.telephone);
+            const phoneLink = phoneNumber ? `tel:${phoneNumber}` : null;
+            const tiktokLink = member.tiktok ? `https://www.tiktok.com/@${member.tiktok.replace('@', '')}` : null;
+
+            let contactHtml = '';
+            if (phoneLink) contactHtml += `<a href="${phoneLink}" class="btn btn-phone"><i class="bi bi-telephone-fill"></i> Appeler</a>`;
+            if (whatsappLink) contactHtml += `<a href="${whatsappLink}" target="_blank" class="btn btn-whatsapp"><i class="bi bi-whatsapp"></i> WhatsApp</a>`;
+            if (tiktokLink) contactHtml += `<a href="${tiktokLink}" target="_blank" class="btn btn-tiktok"><i class="bi bi-tiktok"></i> TikTok</a>`;
+            if (member.document) contactHtml += `<button class="btn btn-doc" onclick="viewFullAffiche()"><i class="bi bi-image"></i> Voir l'affiche</button>`;
+
+            contactDiv.innerHTML = contactHtml || '<span class="text-muted">Aucun contact disponible</span>';
+
+            modal.show();
+        };
+
+        // ===== OUVRIR LA MODALE DE MODIFICATION =====
+        window.openEditModal = function(id) {
+            const member = allMembers.find(m => m.id === id);
+            if (!member) {
+                showToast('❌ Membre non trouvé', 'error');
+                return;
+            }
+
+            document.getElementById('editMemberId').value = id;
+            document.getElementById('editNom').value = member.nomOriginal || member.nom || '';
+            document.getElementById('editResponsabilite').value = member.responsabilite || '';
+            document.getElementById('editChamp').value = member.champ || '';
+            document.getElementById('editAge').value = member.age || '';
+            document.getElementById('editGenre').value = member.genre || '';
+            document.getElementById('editEtudes').value = member.niveauEtudes || '';
+            document.getElementById('editProfession').value = member.professions ? member.professions.join(', ') : '';
+            document.getElementById('editAdresse').value = member.adresse || '';
+            document.getElementById('editAdresseRef').value = member.adresseRef || '';
+            document.getElementById('editTiktok').value = member.tiktok || '';
+
+            document.getElementById('editAffichePreview').style.display = 'none';
+            document.getElementById('editDocument').value = '';
+
+            const champ = member.champ || '';
+            if (champ) {
+                db.collection('districts').where('champ', '==', champ).get()
+                    .then(snapshot => {
+                        const districtSelect = document.getElementById('editDistrict');
+                        districtSelect.innerHTML = '<option value="">Sélectionner...</option>';
+                        snapshot.forEach(doc => {
+                            const d = doc.data();
+                            const opt = document.createElement('option');
+                            opt.value = d.nom;
+                            opt.textContent = d.nom;
+                            districtSelect.appendChild(opt);
+                        });
+                        districtSelect.value = member.district || '';
+
+                        if (member.district) {
+                            db.collection('communautes')
+                                .where('district', '==', member.district)
+                                .where('champ', '==', champ)
+                                .get()
+                                .then(snap => {
+                                    const commSelect = document.getElementById('editCommunaute');
+                                    commSelect.innerHTML = '<option value="">Sélectionner...</option>';
+                                    snap.forEach(doc => {
+                                        const c = doc.data();
+                                        const opt = document.createElement('option');
+                                        opt.value = c.nom;
+                                        opt.textContent = c.nom;
+                                        commSelect.appendChild(opt);
+                                    });
+                                    commSelect.value = member.communaute || '';
+                                });
+                        }
+                    });
+            } else {
+                document.getElementById('editDistrict').innerHTML = '<option value="">Sélectionner d\'abord le champ</option>';
+                document.getElementById('editCommunaute').innerHTML = '<option value="">Sélectionner d\'abord le district</option>';
+            }
+
+            if (member.telephone) {
+                const phone = member.telephone;
+                let code = '243';
+                let number = phone;
+                const codes = ['243', '33', '32', '1', '225', '221', '237', '212', '216', '44', '49'];
+                for (const c of codes) {
+                    if (phone.startsWith(c)) {
+                        code = c;
+                        number = phone.substring(c.length);
+                        break;
+                    }
+                }
+                document.getElementById('editPhoneCode').value = code;
+                document.getElementById('editTelephone').value = number;
+            }
+
+            if (member.whatsapp) {
+                const phone = member.whatsapp;
+                let code = '243';
+                let number = phone;
+                const codes = ['243', '33', '32', '1', '225', '221', '237', '212', '216', '44', '49'];
+                for (const c of codes) {
+                    if (phone.startsWith(c)) {
+                        code = c;
+                        number = phone.substring(c.length);
+                        break;
+                    }
+                }
+                document.getElementById('editWhatsappCode').value = code;
+                document.getElementById('editWhatsapp').value = number;
+            }
+
+            const modal = new bootstrap.Modal(document.getElementById('editMemberModal'));
+            modal.show();
+        };
+
+        // ===== SAUVEGARDER MODIFICATION =====
+        document.getElementById('editMemberForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('editMemberId').value;
+            const nom = document.getElementById('editNom').value.trim();
+            const responsabilite = document.getElementById('editResponsabilite').value;
+            const champ = document.getElementById('editChamp').value;
+            const district = document.getElementById('editDistrict').value;
+            const communaute = document.getElementById('editCommunaute').value;
+            const age = parseInt(document.getElementById('editAge').value);
+            const genre = document.getElementById('editGenre').value;
+            const etudes = document.getElementById('editEtudes').value;
+            const professionRaw = document.getElementById('editProfession').value.trim();
+            const adresse = document.getElementById('editAdresse').value.trim();
+            const adresseRef = document.getElementById('editAdresseRef').value.trim();
+
+            const phoneCode = document.getElementById('editPhoneCode').value;
+            const phoneNumber = document.getElementById('editTelephone').value.trim();
+            const whatsappCode = document.getElementById('editWhatsappCode').value;
+            const whatsappNumber = document.getElementById('editWhatsapp').value.trim();
+            let tiktok = document.getElementById('editTiktok').value.trim();
+
+            const docFile = document.getElementById('editDocument').files[0];
+
+            if (!nom || !responsabilite || !champ || !district || !communaute || !age || !genre || !etudes || !adresse || !adresseRef || !phoneNumber || !whatsappNumber) {
+                showToast('Veuillez remplir tous les champs obligatoires', 'error');
+                return;
+            }
+
+            const professions = professionRaw ? professionRaw.split(',').map(p => p.trim()).filter(p => p) : [];
+
+            if (tiktok) {
+                tiktok = tiktok.replace(/\s/g, '');
+                if (tiktok.startsWith('@')) {
+                    tiktok = tiktok.substring(1);
+                }
+                tiktok = tiktok.replace(/ /g, '_');
+                tiktok = tiktok.replace(/[^a-zA-Z0-9._-]/g, '');
+                tiktok = tiktok.toLowerCase();
+            }
+
+            const fullPhone = buildFullNumber(phoneCode, phoneNumber);
+            const fullWhatsapp = buildFullNumber(whatsappCode, whatsappNumber);
+
+            const prefix = getRolePrefix(responsabilite);
+            const nomComplet = prefix + nom;
+
+            document.getElementById('editSubmitText').style.display = 'none';
+            document.getElementById('editSubmitSpinner').style.display = 'inline-block';
+            showLoading(true);
+
+            try {
+                const updateData = {
+                    nom: nomComplet,
+                    nomOriginal: nom,
+                    responsabilite: responsabilite,
+                    champ: champ,
+                    district: district,
+                    communaute: communaute,
+                    age: age,
+                    genre: genre,
+                    niveauEtudes: etudes,
+                    professions: professions,
+                    adresse: adresse,
+                    adresseRef: adresseRef,
+                    telephone: fullPhone,
+                    whatsapp: fullWhatsapp,
+                    tiktok: tiktok
+                };
+
+                if (docFile) {
+                    const docUrl = await uploadToCloudinary(docFile);
+                    updateData.document = docUrl;
+                }
+
+                await db.collection('membres').doc(id).update(updateData);
+
+                showToast('✅ Membre modifié avec succès', 'success');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editMemberModal'));
+                modal.hide();
+                loadMembers();
+                loadDashboard();
+
+            } catch (error) {
+                console.error('Erreur modification:', error);
+                showToast('❌ ' + error.message, 'error');
+            }
+
+            document.getElementById('editSubmitText').style.display = 'inline-block';
+            document.getElementById('editSubmitSpinner').style.display = 'none';
+            showLoading(false);
+        });
+
+        // ===== DELETE MEMBER =====
+        window.deleteMember = async function(id) {
+            if (!confirm('Voulez-vous vraiment supprimer ce membre ?')) return;
+            showLoading(true);
+            try {
+                await db.collection('membres').doc(id).delete();
+                showToast('Membre supprimé', 'success');
+                loadMembers();
+                loadDashboard();
+            } catch (error) {
+                showToast('Erreur: ' + error.message, 'error');
+            }
+            showLoading(false);
+        };
+
+        // ===== CHARGER LES DISTRICTS =====
+        async function loadDistricts() {
+            const tbody = document.getElementById('districtsList');
+            tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">Chargement...</td></tr>';
+
+            try {
+                const snapshot = await db.collection('districts').orderBy('dateCreation', 'desc').get();
+                let html = '';
+                snapshot.forEach(doc => {
+                    const d = doc.data();
+                    const date = d.dateCreation?.toDate?.()?.toLocaleDateString() || 'N/A';
+                    html += `<tr><td><strong>${d.nom}</strong></td><td>${d.champ}</td><td>${date}</td></tr>`;
+                });
+                tbody.innerHTML = html || '<tr><td colspan="3" class="text-center text-muted">Aucun district créé</td></tr>';
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Erreur de chargement</td></tr>';
+            }
+        }
+
+        // ===== CHARGER LES COMMUNAUTÉS =====
+        async function loadCommunautes() {
+            const tbody = document.getElementById('communautesList');
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Chargement...</td></tr>';
+
+            try {
+                const snapshot = await db.collection('communautes').orderBy('dateCreation', 'desc').get();
+                let html = '';
+                snapshot.forEach(doc => {
+                    const c = doc.data();
+                    const date = c.dateCreation?.toDate?.()?.toLocaleDateString() || 'N/A';
+                    html += `<tr><td><strong>${c.nom}</strong></td><td>${c.champ}</td><td>${c.district}</td><td>${date}</td></tr>`;
+                });
+                tbody.innerHTML = html || '<tr><td colspan="4" class="text-center text-muted">Aucune communauté créée</td></tr>';
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Erreur de chargement</td></tr>';
+            }
+        }
+
+        // ===== DASHBOARD =====
+        async function loadDashboard() {
+            try {
+                const membersSnap = await db.collection('membres').get();
+                const total = membersSnap.size;
+
+                const districtsSnap = await db.collection('districts').get();
+                const communautesSnap = await db.collection('communautes').get();
+
+                const profSet = new Set();
+                membersSnap.forEach(doc => {
+                    const m = doc.data();
+                    if (m.professions) {
+                        m.professions.forEach(p => profSet.add(p));
+                    }
+                });
+
+                document.getElementById('statTotal').textContent = total;
+                document.getElementById('statProfessions').textContent = profSet.size;
+                document.getElementById('statDistricts').textContent = districtsSnap.size;
+                document.getElementById('statCommunautes').textContent = communautesSnap.size;
+
+                const districtCount = {};
+                membersSnap.forEach(doc => {
+                    const m = doc.data();
+                    if (m.district) {
+                        districtCount[m.district] = (districtCount[m.district] || 0) + 1;
+                    }
+                });
+
+                const labels = Object.keys(districtCount);
+                const data = Object.values(districtCount);
+
+                const ctx = document.getElementById('dashboardChart').getContext('2d');
+                if (chartInstance) chartInstance.destroy();
+
+                chartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels.length ? labels : ['Aucun membre'],
+                        datasets: [{
+                            label: 'Nombre de membres par district',
+                            data: labels.length ? data : [0],
+                            backgroundColor: '#003366',
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error('Dashboard error:', error);
+            }
+        }
+
+        // ===== SESSION =====
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
+                    const adminDoc = await db.collection('admins').doc(user.uid).get();
+                    if (adminDoc.exists && adminDoc.data().role === 'admin') {
+                        currentAdmin = { uid: user.uid, ...adminDoc.data() };
+                        localStorage.setItem('currentAdmin', JSON.stringify(currentAdmin));
+                        showMainInterface();
+                        return;
+                    }
+                } catch (e) {}
+            }
+            const saved = localStorage.getItem('currentAdmin');
+            if (saved) {
+                try {
+                    currentAdmin = JSON.parse(saved);
+                    showMainInterface();
+                    return;
+                } catch (e) {}
+            }
+        });
+    </script>
+</body>
+</html>
