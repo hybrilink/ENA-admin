@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>NAC-Business - Administration</title>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
-<!-- PWA Meta Tags -->
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon-192x192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -377,6 +377,17 @@
         .detail-member-header .detail-role .badge-role {
             font-size: 0.75rem;
         }
+        .detail-member-header .ocr-indicator {
+            background: rgba(255,255,255,0.15);
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: var(--accent-yellow);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
 
         .detail-member-body {
             padding: 20px 24px;
@@ -482,6 +493,50 @@
             font-weight: 600;
         }
 
+        .ocr-analysis-display {
+            background: #f0f7ff;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 6px;
+            border: 1px solid #d0e4ff;
+        }
+        .ocr-analysis-display .label {
+            font-size: 0.55rem;
+            color: var(--primary-blue);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .ocr-analysis-display .domain-tag {
+            display: inline-block;
+            padding: 2px 12px;
+            background: #6a1b9a;
+            color: white;
+            border-radius: 15px;
+            font-size: 0.6rem;
+            margin: 2px 3px;
+        }
+        .ocr-analysis-display .skill-tag {
+            display: inline-block;
+            padding: 2px 10px;
+            background: var(--accent-blue);
+            color: white;
+            border-radius: 15px;
+            font-size: 0.6rem;
+            margin: 2px 3px;
+        }
+        .ocr-analysis-display .resume-text {
+            font-size: 0.7rem;
+            color: #444;
+            margin-top: 4px;
+            padding: 6px 10px;
+            background: #fff;
+            border-radius: 6px;
+            border: 1px solid #eee;
+        }
+
         @media (max-width: 576px) {
             .buttons-grid { grid-template-columns: repeat(2, 1fr); }
             .nav-btn { font-size: 0.65rem; padding: 8px 4px; }
@@ -567,10 +622,21 @@
                                 <div class="mb-3">
                                     <label class="form-label"><i class="bi bi-image me-1"></i> Affiche / Document image</label>
                                     <input type="file" class="form-control" id="memberDocument" accept="image/*">
-                                    <small class="text-muted">Champ non obligatoire - Téléchargez une image (affiche, CV scanné, etc.)</small>
+                                    <small class="text-muted">L'IA analysera le texte de l'affiche pour extraire les domaines, compétences, etc.</small>
                                     <div class="affiche-preview" id="affichePreview">
                                         <div class="preview-label"><i class="bi bi-image me-1"></i>Aperçu de l'affiche</div>
                                         <img id="affichePreviewImg" src="" alt="Aperçu de l'affiche">
+                                    </div>
+                                    <div id="ocrProgress" style="display:none; margin-top:8px;">
+                                        <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                                        <span style="font-size:0.75rem; color:var(--primary-blue);">OCR en cours...</span>
+                                    </div>
+                                    <div id="aiAnalysisProgress" style="display:none; margin-top:8px;">
+                                        <div class="spinner-border spinner-border-sm text-success me-2" role="status"></div>
+                                        <span style="font-size:0.75rem; color:var(--success-green);">Analyse IA du texte en cours...</span>
+                                    </div>
+                                    <div id="analysisResult" style="display:none; margin-top:6px; padding:8px 12px; background:#e8f5e9; border-radius:8px; font-size:0.7rem; color:#2e7d32;">
+                                        <i class="bi bi-check-circle-fill me-1"></i> <span id="analysisSummary">Analyse terminée</span>
                                     </div>
                                 </div>
                                 <div class="mb-3">
@@ -733,6 +799,7 @@
                                     <th>Responsabilité</th>
                                     <th>Profession</th>
                                     <th>Affiche</th>
+                                    <th>Domaines</th>
                                     <th>Champ</th>
                                     <th>District</th>
                                     <th>Communauté</th>
@@ -740,7 +807,7 @@
                                 </tr>
                             </thead>
                             <tbody id="membersList">
-                                <tr><td colspan="9" class="text-center text-muted">Chargement...</td></tr>
+                                <tr><td colspan="10" class="text-center text-muted">Chargement...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -928,6 +995,9 @@
                         <div class="detail-role">
                             <span class="badge-role" id="detailBadgeRole">-</span>
                             <span style="margin-left:12px;"><i class="bi bi-geo-alt-fill"></i> <span id="detailChampDistrict">-</span></span>
+                            <span id="detailOcrIndicator" style="display:none; margin-left:12px;" class="ocr-indicator">
+                                <i class="bi bi-image"></i> IA
+                            </span>
                         </div>
                         <div class="detail-status mt-2">
                             <i class="bi bi-check-circle-fill"></i> Membre actif
@@ -936,6 +1006,21 @@
                 </div>
                 <div class="detail-member-body">
                     <div class="detail-grid" id="detailGrid"></div>
+
+                    <!-- OCR Analysis Section -->
+                    <div id="detailOcrSection" style="display:none; margin-top:12px;">
+                        <div style="font-size:0.7rem; font-weight:600; color:#6a1b9a; text-transform:uppercase; margin-bottom:4px;">
+                            <i class="bi bi-image me-1"></i> Analyse IA de l'affiche
+                        </div>
+                        <div class="ocr-analysis-display" id="detailOcrAnalysis">
+                            <span class="label">Domaines d'activité</span>
+                            <div id="detailOcrDomains"></div>
+                            <span class="label" style="margin-top:6px;">Compétences</span>
+                            <div id="detailOcrSkills"></div>
+                            <span class="label" style="margin-top:6px;">Résumé</span>
+                            <div class="resume-text" id="detailOcrResume"></div>
+                        </div>
+                    </div>
 
                     <div id="detailDocSection" style="display:none; margin-top:12px;">
                         <div style="font-size:0.7rem; font-weight:600; color:var(--primary-blue); text-transform:uppercase; margin-bottom:4px;">
@@ -1054,6 +1139,10 @@
                                     <div id="editAffichePreview" style="margin-top:8px; display:none;">
                                         <img id="editAffichePreviewImg" src="" style="max-width:150px; border-radius:8px; border:2px solid #ddd;">
                                     </div>
+                                    <div id="editOcrProgress" style="display:none; margin-top:8px;">
+                                        <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                                        <span style="font-size:0.75rem; color:var(--primary-blue);">Analyse en cours...</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -1141,6 +1230,13 @@
             measurementId: "G-EP0ZQBBNEY"
         };
 
+        // ===== CONFIGURATION GROQ =====
+        const GROQ_CONFIG = {
+            apiKey: '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',
+            model: 'llama-3.3-70b-versatile',
+            endpoint: 'https://api.groq.com/openai/v1/chat/completions'
+        };
+
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
@@ -1180,129 +1276,110 @@
             return data.secure_url;
         }
 
-        function getRoleClass(responsabilite) {
-            const map = {
-                'frere': 'frere',
-                'soeur': 'soeur',
-                'diacre': 'diacre',
-                'pretre': 'pretre',
-                'rsd': 'rsd',
-                'berger': 'berger',
-                'evangeliste': 'evangeliste',
-                'leade': 'leade',
-                'anciens': 'anciens',
-                'rd': 'rd'
-            };
-            return map[responsabilite] || 'frere';
-        }
-
-        function getRoleLabel(responsabilite) {
-            const map = {
-                'frere': 'Frère',
-                'soeur': 'Sœur',
-                'diacre': 'Diacre',
-                'pretre': 'Prêtre',
-                'rsd': 'RSD',
-                'berger': 'Berger',
-                'evangeliste': 'Évangéliste',
-                'leade': 'Leade',
-                'anciens': 'Anciens',
-                'rd': 'RD'
-            };
-            return map[responsabilite] || responsabilite || 'N/A';
-        }
-
-        function getRolePrefix(responsabilite) {
-            const map = {
-                'frere': 'Fr. ',
-                'soeur': 'Sr. ',
-                'diacre': 'Dcr. ',
-                'pretre': 'Pr. ',
-                'rsd': 'RSD ',
-                'berger': 'Berg. ',
-                'evangeliste': 'Évang. ',
-                'leade': 'Ld. ',
-                'anciens': 'Anc. ',
-                'rd': 'RD '
-            };
-            return map[responsabilite] || '';
-        }
-
-        // ===== FORMATAGE INTELLIGENT TIKTOK =====
-        window.formatTiktok = function(input) {
-            let value = input.value.trim();
-            if (!value) return;
-            
-            if (value.includes('tiktok.com/')) {
-                const parts = value.split('tiktok.com/');
-                value = parts[parts.length - 1];
-                if (value.startsWith('@')) {
-                    value = value.substring(1);
-                }
-                value = value.split('/')[0].split('?')[0];
+        // ===== FONCTIONS OCR =====
+        async function extractTextFromImage(imageUrl) {
+            try {
+                const response = await fetch(imageUrl);
+                const blob = await response.blob();
+                const imageObjectUrl = URL.createObjectURL(blob);
+                
+                const result = await Tesseract.recognize(
+                    imageObjectUrl,
+                    'fra',
+                    {
+                        logger: (m) => console.log(m),
+                        tessedit_ocr_engine_mode: Tesseract.PSM.AUTO,
+                        tessedit_pageseg_mode: Tesseract.PSM.AUTO
+                    }
+                );
+                
+                URL.revokeObjectURL(imageObjectUrl);
+                return result.data.text;
+            } catch (error) {
+                console.error('Erreur OCR:', error);
+                return '';
             }
-            
-            if (value.startsWith('@')) {
-                value = value.substring(1);
+        }
+
+        function cleanOcrText(text) {
+            if (!text) return '';
+            return text.replace(/\s+/g, ' ').replace(/\n/g, ' ').trim();
+        }
+
+        // ===== ANALYSE IA DU TEXTE OCR =====
+        async function analyzeOcrTextWithAI(ocrText) {
+            if (!ocrText || ocrText.length < 10) {
+                return { domains: [], skills: [], resume: '', confidence: 0 };
             }
-            
-            value = value.replace(/ /g, '_');
-            value = value.replace(/[^a-zA-Z0-9._-]/g, '');
-            value = value.replace(/_+/g, '_');
-            value = value.replace(/-+/g, '-');
-            value = value.replace(/\.+/g, '.');
-            value = value.replace(/^[_\-.]/, '');
-            value = value.replace(/[_\-.]$/, '');
-            value = value.toLowerCase();
-            
-            input.value = value;
-        };
 
-        function cleanPhoneNumber(phone) {
-            if (!phone) return '';
-            return phone.replace(/\D/g, '');
-        }
+            const systemPrompt = `Tu es un assistant IA expert en analyse de contenu. Tu vas analyser le texte d'une affiche professionnelle et en extraire les informations clés.
 
-        function buildFullNumber(code, number) {
-            const clean = cleanPhoneNumber(number);
-            if (!clean) return '';
-            return code + clean;
-        }
+📋 TEXTE À ANALYSER :
+"""
+${ocrText}
+"""
 
-        // ===== APERÇU DE L'AFFICHE =====
-        document.getElementById('memberDocument')?.addEventListener('change', function(e) {
-            const preview = document.getElementById('affichePreview');
-            const img = document.getElementById('affichePreviewImg');
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(ev) {
-                    img.src = ev.target.result;
-                    preview.style.display = 'block';
+🔍 INSTRUCTIONS :
+1. Identifie les DOMAINES D'ACTIVITÉ (ex: BTP, Transport, Informatique, Santé, Éducation, Commerce, etc.)
+2. Identifie les COMPÉTENCES/MÉTIERS spécifiques mentionnés
+3. Extrais un RÉSUMÉ CONCIS de l'activité de la personne (max 100 mots)
+4. Identifie les COORDONNÉES (téléphone, email, adresse) si présentes
+5. Identifie le NOM de la personne si mentionné
+
+📤 FORMAT DE RÉPONSE (JSON UNIQUEMENT) :
+{
+  "domains": ["domaine1", "domaine2"],
+  "skills": ["compétence1", "compétence2"],
+  "resume": "résumé de l'activité",
+  "name": "nom de la personne ou vide",
+  "phone": "numéro de téléphone ou vide",
+  "location": "localisation ou vide",
+  "confidence": 0.85
+}
+
+⚠️ RÈGLES :
+- Sois précis et ne invente pas d'informations
+- Si un champ n'est pas trouvé, mets une chaîne vide ou un tableau vide
+- Retourne UNIQUEMENT le JSON, sans texte additionnel`;
+
+            try {
+                const response = await fetch(GROQ_CONFIG.endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${GROQ_CONFIG.apiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: GROQ_CONFIG.model,
+                        messages: [
+                            { role: 'system', content: systemPrompt },
+                            { role: 'user', content: `Analyse ce texte d'affiche : "${ocrText.substring(0, 2000)}"` }
+                        ],
+                        temperature: 0.1,
+                        max_tokens: 1024
+                    })
+                });
+
+                if (!response.ok) throw new Error(`Erreur API (${response.status})`);
+                const data = await response.json();
+                const content = data.choices[0].message.content;
+                const jsonMatch = content.match(/\{[\s\S]*\}/);
+                const result = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(content);
+                
+                return {
+                    domains: result.domains || [],
+                    skills: result.skills || [],
+                    resume: result.resume || '',
+                    name: result.name || '',
+                    phone: result.phone || '',
+                    location: result.location || '',
+                    confidence: result.confidence || 0
                 };
-                reader.readAsDataURL(file);
-            } else {
-                preview.style.display = 'none';
-                img.src = '';
+            } catch (error) {
+                console.error('Erreur analyse IA:', error);
+                return { domains: [], skills: [], resume: '', confidence: 0 };
             }
-        });
-
-        document.getElementById('editDocument')?.addEventListener('change', function(e) {
-            const preview = document.getElementById('editAffichePreview');
-            const img = document.getElementById('editAffichePreviewImg');
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(ev) {
-                    img.src = ev.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            } else {
-                preview.style.display = 'none';
-                img.src = '';
-            }
-        });
+        }
 
         // ===== NAVIGATION =====
         document.querySelectorAll('.nav-btn[data-section]').forEach(btn => {
@@ -1444,7 +1521,6 @@
             });
         });
 
-        // ===== FILTRES MODAL MODIFICATION =====
         document.getElementById('editChamp')?.addEventListener('change', async function() {
             const champ = this.value;
             const districtSelect = document.getElementById('editDistrict');
@@ -1480,7 +1556,7 @@
             });
         });
 
-        // ===== CRÉATION DISTRICT =====
+        // ===== DISTRICT =====
         document.getElementById('districtForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             const nom = document.getElementById('districtNom').value.trim();
@@ -1509,7 +1585,7 @@
             showLoading(false);
         });
 
-        // ===== CRÉATION COMMUNAUTÉ =====
+        // ===== COMMUNAUTÉ =====
         document.getElementById('communauteForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             const nom = document.getElementById('communauteNom').value.trim();
@@ -1541,7 +1617,98 @@
             showLoading(false);
         });
 
-        // ===== CRÉATION MEMBRE =====
+        // ===== FONCTIONS MEMBRE =====
+        function getRoleClass(responsabilite) {
+            const map = {
+                'frere': 'frere', 'soeur': 'soeur', 'diacre': 'diacre', 'pretre': 'pretre',
+                'rsd': 'rsd', 'berger': 'berger', 'evangeliste': 'evangeliste',
+                'leade': 'leade', 'anciens': 'anciens', 'rd': 'rd'
+            };
+            return map[responsabilite] || 'frere';
+        }
+
+        function getRoleLabel(responsabilite) {
+            const map = {
+                'frere': 'Frère', 'soeur': 'Sœur', 'diacre': 'Diacre', 'pretre': 'Prêtre',
+                'rsd': 'RSD', 'berger': 'Berger', 'evangeliste': 'Évangéliste',
+                'leade': 'Leade', 'anciens': 'Anciens', 'rd': 'RD'
+            };
+            return map[responsabilite] || responsabilite || 'N/A';
+        }
+
+        function getRolePrefix(responsabilite) {
+            const map = {
+                'frere': 'Fr. ', 'soeur': 'Sr. ', 'diacre': 'Dcr. ', 'pretre': 'Pr. ',
+                'rsd': 'RSD ', 'berger': 'Berg. ', 'evangeliste': 'Évang. ',
+                'leade': 'Ld. ', 'anciens': 'Anc. ', 'rd': 'RD '
+            };
+            return map[responsabilite] || '';
+        }
+
+        function formatTiktok(input) {
+            let value = input.value.trim();
+            if (!value) return;
+            if (value.includes('tiktok.com/')) {
+                const parts = value.split('tiktok.com/');
+                value = parts[parts.length - 1];
+                if (value.startsWith('@')) value = value.substring(1);
+                value = value.split('/')[0].split('?')[0];
+            }
+            if (value.startsWith('@')) value = value.substring(1);
+            value = value.replace(/ /g, '_');
+            value = value.replace(/[^a-zA-Z0-9._-]/g, '');
+            value = value.replace(/_+/g, '_').replace(/-+/g, '-').replace(/\.+/g, '.');
+            value = value.replace(/^[_\-.]/, '').replace(/[_\-.]$/, '');
+            input.value = value.toLowerCase();
+        }
+
+        function cleanPhoneNumber(phone) {
+            if (!phone) return '';
+            return phone.replace(/\D/g, '');
+        }
+
+        function buildFullNumber(code, number) {
+            const clean = cleanPhoneNumber(number);
+            if (!clean) return '';
+            return code + clean;
+        }
+
+        // ===== APERÇU DE L'AFFICHE =====
+        document.getElementById('memberDocument')?.addEventListener('change', function(e) {
+            const preview = document.getElementById('affichePreview');
+            const img = document.getElementById('affichePreviewImg');
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    img.src = ev.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+                img.src = '';
+            }
+        });
+
+        document.getElementById('editDocument')?.addEventListener('change', function(e) {
+            const preview = document.getElementById('editAffichePreview');
+            const img = document.getElementById('editAffichePreviewImg');
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    img.src = ev.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+                img.src = '';
+            }
+        });
+
+        // ===== CRÉATION MEMBRE AVEC ANALYSE IA =====
         document.getElementById('memberForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -1571,13 +1738,11 @@
                 return;
             }
 
-            const professions = professionRaw ? professionRaw.split(',').map(p => p.trim()).filter(p => p) : [];
+            let professions = professionRaw ? professionRaw.split(',').map(p => p.trim()).filter(p => p) : [];
 
             if (tiktok) {
                 tiktok = tiktok.replace(/\s/g, '');
-                if (tiktok.startsWith('@')) {
-                    tiktok = tiktok.substring(1);
-                }
+                if (tiktok.startsWith('@')) tiktok = tiktok.substring(1);
                 tiktok = tiktok.replace(/ /g, '_');
                 tiktok = tiktok.replace(/[^a-zA-Z0-9._-]/g, '');
                 tiktok = tiktok.toLowerCase();
@@ -1592,13 +1757,57 @@
 
             try {
                 let photoUrl = 'https://res.cloudinary.com/diwn8sxtn/image/upload/v1/default_profile';
-                if (photoFile) {
-                    photoUrl = await uploadToCloudinary(photoFile);
-                }
+                if (photoFile) photoUrl = await uploadToCloudinary(photoFile);
 
                 let docUrl = null;
+                let ocrText = '';
+                let ocrAnalysis = { domains: [], skills: [], resume: '', name: '', phone: '', location: '', confidence: 0 };
+
                 if (docFile) {
                     docUrl = await uploadToCloudinary(docFile);
+                    
+                    document.getElementById('ocrProgress').style.display = 'block';
+                    showToast('🔍 Lecture de l\'affiche...', 'success');
+                    
+                    const rawText = await extractTextFromImage(docUrl);
+                    ocrText = cleanOcrText(rawText);
+                    
+                    document.getElementById('ocrProgress').style.display = 'none';
+                    document.getElementById('aiAnalysisProgress').style.display = 'block';
+                    showToast('🧠 Analyse IA du texte...', 'success');
+                    
+                    ocrAnalysis = await analyzeOcrTextWithAI(ocrText);
+                    
+                    document.getElementById('aiAnalysisProgress').style.display = 'none';
+                    document.getElementById('analysisResult').style.display = 'block';
+                    
+                    // Ajouter les domaines comme professions
+                    if (ocrAnalysis.domains && ocrAnalysis.domains.length) {
+                        ocrAnalysis.domains.forEach(domain => {
+                            if (!professions.some(p => p.toLowerCase() === domain.toLowerCase())) {
+                                professions.push(domain);
+                            }
+                        });
+                    }
+                    
+                    // Ajouter les compétences comme professions
+                    if (ocrAnalysis.skills && ocrAnalysis.skills.length) {
+                        ocrAnalysis.skills.forEach(skill => {
+                            if (!professions.some(p => p.toLowerCase() === skill.toLowerCase())) {
+                                professions.push(skill);
+                            }
+                        });
+                    }
+                    
+                    document.getElementById('analysisSummary').textContent = 
+                        `✅ ${ocrAnalysis.domains.length || 0} domaines, ${ocrAnalysis.skills.length || 0} compétences identifiés`;
+                    
+                    if (ocrAnalysis.confidence > 0.5) {
+                        showToast(`📊 Analyse IA terminée (confiance ${Math.round(ocrAnalysis.confidence * 100)}%)`, 'success');
+                    }
+                    
+                    console.log('📝 OCR Text:', ocrText.substring(0, 200) + '...');
+                    console.log('🧠 Analyse IA:', ocrAnalysis);
                 }
 
                 const prefix = getRolePrefix(responsabilite);
@@ -1622,6 +1831,14 @@
                     tiktok: tiktok,
                     photo: photoUrl,
                     document: docUrl,
+                    ocrText: ocrText,
+                    ocrDomains: ocrAnalysis.domains || [],
+                    ocrSkills: ocrAnalysis.skills || [],
+                    ocrResume: ocrAnalysis.resume || '',
+                    ocrName: ocrAnalysis.name || '',
+                    ocrPhone: ocrAnalysis.phone || '',
+                    ocrLocation: ocrAnalysis.location || '',
+                    ocrConfidence: ocrAnalysis.confidence || 0,
                     dateInscription: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
@@ -1629,6 +1846,9 @@
                 document.getElementById('memberForm').reset();
                 document.getElementById('affichePreview').style.display = 'none';
                 document.getElementById('affichePreviewImg').src = '';
+                document.getElementById('ocrProgress').style.display = 'none';
+                document.getElementById('aiAnalysisProgress').style.display = 'none';
+                document.getElementById('analysisResult').style.display = 'none';
                 document.getElementById('memberDistrict').innerHTML = '<option value="">Sélectionner d\'abord le champ</option>';
                 document.getElementById('memberCommunaute').innerHTML = '<option value="">Sélectionner d\'abord le district</option>';
                 loadMembers();
@@ -1636,6 +1856,8 @@
 
             } catch (error) {
                 showToast('❌ ' + error.message, 'error');
+                document.getElementById('ocrProgress').style.display = 'none';
+                document.getElementById('aiAnalysisProgress').style.display = 'none';
             }
 
             document.getElementById('memberSubmitText').style.display = 'inline-block';
@@ -1646,7 +1868,7 @@
         // ===== CHARGER LES MEMBRES =====
         async function loadMembers() {
             const tbody = document.getElementById('membersList');
-            tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted">Chargement...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="10" class="text-center text-muted">Chargement...</td></tr>';
 
             try {
                 const snapshot = await db.collection('membres').orderBy('dateInscription', 'desc').get();
@@ -1668,12 +1890,22 @@
                         docHtml = '<span class="no-doc"><i class="bi bi-image"></i></span>';
                     }
 
+                    let domainsHtml = '';
+                    if (m.ocrDomains && m.ocrDomains.length) {
+                        domainsHtml = `<span style="font-size:0.55rem; background:#f3e5f5; padding:2px 8px; border-radius:12px; color:#6a1b9a;">
+                            <i class="bi bi-check-circle-fill me-1"></i>${m.ocrDomains.slice(0, 2).join(', ')}${m.ocrDomains.length > 2 ? '...' : ''}
+                        </span>`;
+                    } else {
+                        domainsHtml = '<span style="font-size:0.6rem; color:#ccc;">-</span>';
+                    }
+
                     html += `<tr>
                         <td><img src="${m.photo || 'https://res.cloudinary.com/diwn8sxtn/image/upload/v1/default_profile'}" alt="photo"></td>
                         <td><strong>${m.nom || 'N/A'}</strong></td>
                         <td><span class="badge-role ${roleClass}">${roleLabel}</span></td>
-                        <td>${m.professions ? m.professions.join(', ') : '-'}</td>
+                        <td>${m.professions ? m.professions.slice(0, 2).join(', ') : '-'}</td>
                         <td style="text-align:center;">${docHtml}</td>
+                        <td style="text-align:center;">${domainsHtml}</td>
                         <td>${m.champ || '-'}</td>
                         <td>${m.district || '-'}</td>
                         <td>${m.communaute || '-'}</td>
@@ -1685,10 +1917,10 @@
                     </tr>`;
                 });
 
-                tbody.innerHTML = html || '<tr><td colspan="9" class="text-center text-muted">Aucun membre inscrit</td></tr>';
+                tbody.innerHTML = html || '<tr><td colspan="10" class="text-center text-muted">Aucun membre inscrit</td></tr>';
 
             } catch (error) {
-                tbody.innerHTML = '<tr><td colspan="9" class="text-center text-danger">Erreur de chargement</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="10" class="text-center text-danger">Erreur de chargement</td></tr>';
             }
         }
 
@@ -1697,14 +1929,11 @@
             window.open(url, '_blank');
         };
 
-        // ===== VIEW FULL AFFICHE DEPUIS LA MODALE =====
         window.viewFullAffiche = function() {
-            if (currentDocUrl) {
-                window.open(currentDocUrl, '_blank');
-            }
+            if (currentDocUrl) window.open(currentDocUrl, '_blank');
         };
 
-        // ===== VIEW MEMBER DETAIL (INTERFACE PROPRE) =====
+        // ===== VIEW MEMBER DETAIL AVEC ANALYSE IA =====
         window.viewMemberDetail = function(id) {
             const member = allMembers.find(m => m.id === id);
             if (!member) {
@@ -1714,7 +1943,6 @@
 
             const modal = new bootstrap.Modal(document.getElementById('detailMemberModal'));
             
-            // Header
             document.getElementById('detailAvatar').src = member.photo || 'https://res.cloudinary.com/diwn8sxtn/image/upload/v1/default_profile';
             document.getElementById('detailNom').textContent = member.nom || 'N/A';
             
@@ -1727,7 +1955,13 @@
             const champDistrict = `${member.champ || ''} ${member.district ? '· ' + member.district : ''}`;
             document.getElementById('detailChampDistrict').textContent = champDistrict || 'N/A';
 
-            // Grid des informations
+            const ocrIndicator = document.getElementById('detailOcrIndicator');
+            if (member.ocrDomains && member.ocrDomains.length) {
+                ocrIndicator.style.display = 'inline-flex';
+            } else {
+                ocrIndicator.style.display = 'none';
+            }
+
             const grid = document.getElementById('detailGrid');
             const professionsHtml = member.professions && member.professions.length > 0
                 ? member.professions.map(p => `<span class="tag">${p}</span>`).join(' ')
@@ -1786,7 +2020,26 @@
                 </div>
             `;
 
-            // Document / Affiche
+            // OCR Analysis Section
+            const ocrSection = document.getElementById('detailOcrSection');
+            const ocrDomains = document.getElementById('detailOcrDomains');
+            const ocrSkills = document.getElementById('detailOcrSkills');
+            const ocrResume = document.getElementById('detailOcrResume');
+            
+            if (member.ocrDomains && member.ocrDomains.length) {
+                ocrSection.style.display = 'block';
+                ocrDomains.innerHTML = member.ocrDomains.map(d => 
+                    `<span class="domain-tag">${d}</span>`
+                ).join('');
+                ocrSkills.innerHTML = (member.ocrSkills || []).map(s => 
+                    `<span class="skill-tag">${s}</span>`
+                ).join('');
+                ocrResume.textContent = member.ocrResume || 'Aucun résumé disponible';
+            } else {
+                ocrSection.style.display = 'none';
+            }
+
+            // Document
             const docSection = document.getElementById('detailDocSection');
             const docImg = document.getElementById('detailDocImg');
             if (member.document) {
@@ -1799,7 +2052,7 @@
                 docImg.src = '';
             }
 
-            // Boutons de contact
+            // Contact buttons
             const contactDiv = document.getElementById('detailContactButtons');
             const whatsappNumber = cleanPhoneNumber(member.whatsapp);
             const whatsappLink = whatsappNumber ? `https://wa.me/${whatsappNumber}` : null;
@@ -1916,7 +2169,7 @@
             modal.show();
         };
 
-        // ===== SAUVEGARDER MODIFICATION =====
+        // ===== SAUVEGARDER MODIFICATION AVEC ANALYSE IA =====
         document.getElementById('editMemberForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -1946,13 +2199,11 @@
                 return;
             }
 
-            const professions = professionRaw ? professionRaw.split(',').map(p => p.trim()).filter(p => p) : [];
+            let professions = professionRaw ? professionRaw.split(',').map(p => p.trim()).filter(p => p) : [];
 
             if (tiktok) {
                 tiktok = tiktok.replace(/\s/g, '');
-                if (tiktok.startsWith('@')) {
-                    tiktok = tiktok.substring(1);
-                }
+                if (tiktok.startsWith('@')) tiktok = tiktok.substring(1);
                 tiktok = tiktok.replace(/ /g, '_');
                 tiktok = tiktok.replace(/[^a-zA-Z0-9._-]/g, '');
                 tiktok = tiktok.toLowerCase();
@@ -1988,8 +2239,35 @@
                 };
 
                 if (docFile) {
+                    document.getElementById('editOcrProgress').style.display = 'block';
+                    
                     const docUrl = await uploadToCloudinary(docFile);
                     updateData.document = docUrl;
+                    
+                    // OCR + Analyse IA
+                    const rawText = await extractTextFromImage(docUrl);
+                    const ocrText = cleanOcrText(rawText);
+                    const ocrAnalysis = await analyzeOcrTextWithAI(ocrText);
+                    
+                    updateData.ocrText = ocrText;
+                    updateData.ocrDomains = ocrAnalysis.domains || [];
+                    updateData.ocrSkills = ocrAnalysis.skills || [];
+                    updateData.ocrResume = ocrAnalysis.resume || '';
+                    updateData.ocrName = ocrAnalysis.name || '';
+                    updateData.ocrPhone = ocrAnalysis.phone || '';
+                    updateData.ocrLocation = ocrAnalysis.location || '';
+                    updateData.ocrConfidence = ocrAnalysis.confidence || 0;
+                    
+                    // Ajouter les domaines et compétences aux professions
+                    [...(ocrAnalysis.domains || []), ...(ocrAnalysis.skills || [])].forEach(item => {
+                        if (!professions.some(p => p.toLowerCase() === item.toLowerCase())) {
+                            professions.push(item);
+                        }
+                    });
+                    updateData.professions = professions;
+                    
+                    document.getElementById('editOcrProgress').style.display = 'none';
+                    showToast(`🧠 Analyse IA terminée (${ocrAnalysis.domains?.length || 0} domaines)`, 'success');
                 }
 
                 await db.collection('membres').doc(id).update(updateData);
@@ -2003,6 +2281,7 @@
             } catch (error) {
                 console.error('Erreur modification:', error);
                 showToast('❌ ' + error.message, 'error');
+                document.getElementById('editOcrProgress').style.display = 'none';
             }
 
             document.getElementById('editSubmitText').style.display = 'inline-block';
@@ -2075,9 +2354,9 @@
                 const profSet = new Set();
                 membersSnap.forEach(doc => {
                     const m = doc.data();
-                    if (m.professions) {
-                        m.professions.forEach(p => profSet.add(p));
-                    }
+                    if (m.professions) m.professions.forEach(p => profSet.add(p));
+                    if (m.ocrDomains) m.ocrDomains.forEach(d => profSet.add(d));
+                    if (m.ocrSkills) m.ocrSkills.forEach(s => profSet.add(s));
                 });
 
                 document.getElementById('statTotal').textContent = total;
@@ -2112,12 +2391,8 @@
                     },
                     options: {
                         responsive: true,
-                        plugins: {
-                            legend: { display: false }
-                        },
-                        scales: {
-                            y: { beginAtZero: true, ticks: { stepSize: 1 } }
-                        }
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
                     }
                 });
 
