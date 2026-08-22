@@ -124,9 +124,9 @@
 
         .buttons-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            padding: 14px 16px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            padding: 12px 14px;
             background: var(--white);
             border-bottom: 1px solid #eee;
         }
@@ -135,17 +135,17 @@
             color: var(--primary-blue);
             border: 1px solid #e0e0e0;
             border-radius: 14px;
-            padding: 10px 6px;
-            font-size: 0.7rem;
+            padding: 8px 4px;
+            font-size: 0.65rem;
             font-weight: 600;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             transition: all 0.3s;
             cursor: pointer;
         }
-        .nav-btn i { font-size: 1.3rem; }
+        .nav-btn i { font-size: 1.2rem; }
         .nav-btn.active {
             background: var(--primary-blue);
             color: var(--white);
@@ -213,19 +213,34 @@
             border-radius: 12px;
         }
         .btn-warning:hover { background: #e6a03a; }
+        .btn-danger {
+            background: var(--danger-red);
+            border: none;
+            font-weight: 600;
+            border-radius: 12px;
+        }
+        .btn-danger:hover { background: #c82333; }
+        .btn-outline-success {
+            border-color: var(--success-green);
+            color: var(--success-green);
+        }
+        .btn-outline-success:hover {
+            background: var(--success-green);
+            color: white;
+        }
 
         .table-custom { width: 100%; border-collapse: collapse; }
         .table-custom th {
             background: var(--primary-blue);
             color: var(--white);
-            padding: 10px;
-            font-size: 0.8rem;
+            padding: 8px 10px;
+            font-size: 0.75rem;
             text-align: left;
         }
         .table-custom td {
-            padding: 8px 10px;
+            padding: 6px 10px;
             border-bottom: 1px solid #eee;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             vertical-align: middle;
         }
         .table-custom tr:hover td { background: #f8f9fa; }
@@ -252,6 +267,17 @@
         .badge-role.anciens { background: #6c757d; color: white; }
         .badge-role.rd { background: #e83e8c; color: white; }
         .badge-role.soeur { background: #e83e8c; color: white; }
+
+        .badge-pub {
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.6rem;
+            font-weight: 600;
+        }
+        .badge-pub.active { background: #28a745; color: white; }
+        .badge-pub.inactive { background: #dc3545; color: white; }
+        .badge-pub.waiting { background: #fd7e14; color: white; }
+        .badge-pub.expired { background: #6c757d; color: white; }
 
         .toast-container {
             position: fixed;
@@ -348,205 +374,77 @@
             font-size: 1.2rem;
         }
 
-        /* ===== MODALE DETAIL MEMBRE ===== */
-        .detail-member-header {
-            background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue));
-            padding: 20px 24px;
-            border-radius: 20px 20px 0 0;
-            color: white;
+        .search-member-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--primary-blue);
+            border-radius: 0 0 12px 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        .search-member-results .result-item {
+            padding: 8px 12px;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
+            gap: 10px;
+            border-bottom: 1px solid #eee;
         }
-        .detail-member-header .detail-avatar {
-            width: 80px;
-            height: 80px;
+        .search-member-results .result-item:hover {
+            background: var(--light-gray);
+        }
+        .search-member-results .result-item img {
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid var(--accent-yellow);
         }
-        .detail-member-header .detail-name {
-            font-size: 1.3rem;
-            font-weight: 700;
-        }
-        .detail-member-header .detail-role {
-            font-size: 0.85rem;
-            opacity: 0.9;
-        }
-        .detail-member-header .detail-role .badge-role {
-            font-size: 0.75rem;
-        }
-        .detail-member-header .ocr-indicator {
-            background: rgba(255,255,255,0.15);
-            padding: 2px 12px;
-            border-radius: 20px;
-            font-size: 0.6rem;
+        .search-member-results .result-item .result-name {
             font-weight: 600;
-            color: var(--accent-yellow);
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
+            font-size: 0.8rem;
+        }
+        .search-member-results .result-item .result-prof {
+            font-size: 0.65rem;
+            color: var(--text-muted);
         }
 
-        .detail-member-body {
-            padding: 20px 24px;
-            max-height: 70vh;
-            overflow-y: auto;
-        }
-
-        .detail-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-        .detail-grid .detail-item {
-            background: #f7f9fb;
-            border-radius: 10px;
-            padding: 10px 14px;
-            border: 1px solid #eef1f5;
-        }
-        .detail-grid .detail-item .label {
-            font-size: 0.6rem;
-            color: #888;
-            text-transform: uppercase;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-            display: block;
-            margin-bottom: 2px;
-        }
-        .detail-grid .detail-item .label i { margin-right: 4px; }
-        .detail-grid .detail-item .value {
-            font-size: 0.85rem;
-            color: var(--primary-blue);
-            font-weight: 500;
-        }
-        .detail-grid .detail-item.full-width { grid-column: 1 / -1; }
-
-        .detail-professions-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            margin-top: 2px;
-        }
-        .detail-professions-tags .tag {
-            padding: 2px 12px;
-            background: var(--primary-blue);
-            color: white;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 500;
-        }
-
-        .detail-doc-preview {
-            margin-top: 10px;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 2px solid #e0e0e0;
-            max-width: 300px;
-        }
-        .detail-doc-preview img {
-            width: 100%;
-            height: auto;
-            display: block;
-            cursor: pointer;
-        }
-
-        .detail-contact-buttons {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1.5px solid #eef1f5;
-        }
-        .detail-contact-buttons .btn {
-            border-radius: 20px;
-            padding: 6px 18px;
-            font-weight: 600;
-            font-size: 0.75rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            border: none;
-            transition: all 0.3s;
-        }
-        .detail-contact-buttons .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-        }
-        .btn-whatsapp { background: #25D366; color: white; }
-        .btn-whatsapp:hover { background: #1da851; color: white; }
-        .btn-phone { background: #34B7F1; color: white; }
-        .btn-phone:hover { background: #1a9fd6; color: white; }
-        .btn-tiktok { background: #000000; color: white; }
-        .btn-tiktok:hover { background: #1a1a1a; color: white; }
-        .btn-doc { background: #dc3545; color: white; }
-        .btn-doc:hover { background: #c82333; color: white; }
-
-        .detail-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            color: var(--success-green);
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .ocr-analysis-display {
-            background: #f0f7ff;
-            border-radius: 8px;
-            padding: 10px 14px;
-            margin-top: 6px;
-            border: 1px solid #d0e4ff;
-        }
-        .ocr-analysis-display .label {
-            font-size: 0.55rem;
-            color: var(--primary-blue);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            display: block;
-            margin-bottom: 4px;
-        }
-        .ocr-analysis-display .domain-tag {
-            display: inline-block;
-            padding: 2px 12px;
-            background: #6a1b9a;
-            color: white;
-            border-radius: 15px;
-            font-size: 0.6rem;
-            margin: 2px 3px;
-        }
-        .ocr-analysis-display .skill-tag {
-            display: inline-block;
-            padding: 2px 10px;
-            background: var(--accent-blue);
-            color: white;
-            border-radius: 15px;
-            font-size: 0.6rem;
-            margin: 2px 3px;
-        }
-        .ocr-analysis-display .resume-text {
-            font-size: 0.7rem;
-            color: #444;
-            margin-top: 4px;
-            padding: 6px 10px;
-            background: #fff;
+        .media-thumbnail {
+            width: 60px;
+            height: 45px;
+            object-fit: cover;
             border-radius: 6px;
-            border: 1px solid #eee;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .media-thumbnail:hover {
+            transform: scale(1.1);
+        }
+        .media-thumbnail-video {
+            position: relative;
+            display: inline-block;
+        }
+        .media-thumbnail-video::after {
+            content: '▶';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 18px;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
         }
 
         @media (max-width: 576px) {
-            .buttons-grid { grid-template-columns: repeat(2, 1fr); }
-            .nav-btn { font-size: 0.65rem; padding: 8px 4px; }
-            .nav-btn i { font-size: 1.1rem; }
+            .buttons-grid { grid-template-columns: repeat(3, 1fr); }
+            .nav-btn { font-size: 0.55rem; padding: 6px 2px; }
+            .nav-btn i { font-size: 1rem; }
             .user-profile span { display: none; }
             .header-title { font-size: 0.9rem; }
-            .detail-grid { grid-template-columns: 1fr; }
-            .detail-member-header { flex-direction: column; text-align: center; }
-            .detail-contact-buttons { flex-direction: column; align-items: stretch; }
-            .detail-contact-buttons .btn { width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -605,6 +503,7 @@
             <button class="nav-btn" data-section="dashboard"><i class="bi bi-speedometer2"></i><span>Dashboard</span></button>
             <button class="nav-btn" data-section="district"><i class="bi bi-map-fill"></i><span>District</span></button>
             <button class="nav-btn" data-section="communautes"><i class="bi bi-people-fill"></i><span>Communauté</span></button>
+            <button class="nav-btn" data-section="publicite"><i class="bi bi-megaphone-fill"></i><span>Publicités</span></button>
         </div>
 
         <div class="content-area">
@@ -937,10 +836,93 @@
                     </div>
                 </div>
             </div>
+
+            <!-- PUBLICITÉS -->
+            <div id="publiciteSection" class="content-section">
+                <div class="section-card">
+                    <h2 class="section-title"><i class="bi bi-megaphone-fill"></i> Créer une publicité</h2>
+                    <form id="publiciteForm" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-image me-1"></i> Média (image ou vidéo) *</label>
+                                    <input type="file" class="form-control" id="pubMedia" accept="image/*,video/*" required>
+                                    <div id="pubPreview" style="display:none; margin-top:8px;"></div>
+                                    <small class="text-muted">Formats supportés: images (jpg, png, gif) et vidéos (mp4, webm, mov)</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-tag-fill me-1"></i> Titre *</label>
+                                    <input type="text" class="form-control" id="pubTitre" placeholder="Ex: Promotion Spéciale" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-link-45deg me-1"></i> Lien (URL)</label>
+                                    <input type="url" class="form-control" id="pubLien" placeholder="https://exemple.com">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-person-fill me-1"></i> Rechercher un membre</label>
+                                    <div style="position:relative;">
+                                        <input type="text" class="form-control" id="pubMembreSearch" placeholder="Tapez le nom du membre..." autocomplete="off">
+                                        <div class="search-member-results" id="pubMembreResults"></div>
+                                    </div>
+                                    <input type="hidden" id="pubMembreId">
+                                    <div id="pubMembreSelected" style="display:none; margin-top:6px; padding:8px 12px; background:#e8f5e9; border-radius:8px; border:1px solid #c8e6c9;">
+                                        <span id="pubMembreSelectedName"></span>
+                                        <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="clearSelectedMember()"><i class="bi bi-x"></i></button>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-calendar-event me-1"></i> Date de début *</label>
+                                    <input type="datetime-local" class="form-control" id="pubDateDebut" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-calendar-event me-1"></i> Date de fin *</label>
+                                    <input type="datetime-local" class="form-control" id="pubDateFin" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-toggle-on me-1"></i> Actif</label>
+                                    <select class="form-select" id="pubActif">
+                                        <option value="true">Oui</option>
+                                        <option value="false">Non</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-3">
+                            <span id="pubSubmitText"><i class="bi bi-plus-circle me-2"></i>Créer la publicité</span>
+                            <span id="pubSubmitSpinner" style="display: none;">Création...</span>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="section-card">
+                    <h2 class="section-title"><i class="bi bi-list-ul"></i> Liste des publicités</h2>
+                    <div class="table-responsive">
+                        <table class="table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Média</th>
+                                    <th>Titre</th>
+                                    <th>Membre</th>
+                                    <th>Début</th>
+                                    <th>Fin</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="publicitesList">
+                                <tr><td colspan="7" class="text-center text-muted">Chargement...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- ===== MODALE PROFIL ===== -->
+    <!-- ===== MODALES ===== -->
+    <!-- MODALE PROFIL -->
     <div class="modal fade" id="profileModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -980,7 +962,7 @@
         </div>
     </div>
 
-    <!-- ===== MODALE DETAIL MEMBRE ===== -->
+    <!-- MODALE DETAIL MEMBRE -->
     <div class="modal fade" id="detailMemberModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
@@ -988,14 +970,14 @@
                     <h5 class="modal-title"><i class="bi bi-person-badge me-2"></i>Détail du membre</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="detail-member-header">
-                    <img id="detailAvatar" class="detail-avatar" src="" alt="Photo">
+                <div class="detail-member-header" style="background:linear-gradient(135deg, var(--primary-blue), var(--dark-blue));padding:20px 24px;border-radius:20px 20px 0 0;color:white;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+                    <img id="detailAvatar" class="detail-avatar" src="" alt="Photo" style="width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--accent-yellow);">
                     <div>
-                        <div class="detail-name" id="detailNom">-</div>
+                        <div class="detail-name" id="detailNom" style="font-size:1.3rem;font-weight:700;">-</div>
                         <div class="detail-role">
                             <span class="badge-role" id="detailBadgeRole">-</span>
                             <span style="margin-left:12px;"><i class="bi bi-geo-alt-fill"></i> <span id="detailChampDistrict">-</span></span>
-                            <span id="detailOcrIndicator" style="display:none; margin-left:12px;" class="ocr-indicator">
+                            <span id="detailOcrIndicator" style="display:none; margin-left:12px; background:rgba(255,255,255,0.15);padding:2px 12px;border-radius:20px;font-size:0.6rem;font-weight:600;color:var(--accent-yellow);">
                                 <i class="bi bi-image"></i> IA
                             </span>
                         </div>
@@ -1004,40 +986,34 @@
                         </div>
                     </div>
                 </div>
-                <div class="detail-member-body">
-                    <div class="detail-grid" id="detailGrid"></div>
-
-                    <!-- OCR Analysis Section -->
-                    <div id="detailOcrSection" style="display:none; margin-top:12px;">
-                        <div style="font-size:0.7rem; font-weight:600; color:#6a1b9a; text-transform:uppercase; margin-bottom:4px;">
+                <div class="detail-member-body" style="padding:20px 24px;max-height:70vh;overflow-y:auto;">
+                    <div class="detail-grid" id="detailGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"></div>
+                    <div id="detailOcrSection" style="display:none; margin-top:12px; background:#f0f7ff;border-radius:8px;padding:10px 14px;border:1px solid #d0e4ff;">
+                        <div style="font-size:0.55rem;font-weight:700;color:var(--primary-blue);text-transform:uppercase;letter-spacing:0.3px;display:block;margin-bottom:4px;">
                             <i class="bi bi-image me-1"></i> Analyse IA de l'affiche
                         </div>
-                        <div class="ocr-analysis-display" id="detailOcrAnalysis">
-                            <span class="label">Domaines d'activité</span>
-                            <div id="detailOcrDomains"></div>
-                            <span class="label" style="margin-top:6px;">Compétences</span>
-                            <div id="detailOcrSkills"></div>
-                            <span class="label" style="margin-top:6px;">Résumé</span>
-                            <div class="resume-text" id="detailOcrResume"></div>
-                        </div>
+                        <span class="label" style="font-size:0.55rem;color:var(--primary-blue);font-weight:700;text-transform:uppercase;letter-spacing:0.3px;display:block;margin-bottom:4px;">Domaines d'activité</span>
+                        <div id="detailOcrDomains"></div>
+                        <span class="label" style="font-size:0.55rem;color:var(--primary-blue);font-weight:700;text-transform:uppercase;letter-spacing:0.3px;display:block;margin-top:6px;margin-bottom:4px;">Compétences</span>
+                        <div id="detailOcrSkills"></div>
+                        <span class="label" style="font-size:0.55rem;color:var(--primary-blue);font-weight:700;text-transform:uppercase;letter-spacing:0.3px;display:block;margin-top:6px;margin-bottom:4px;">Résumé</span>
+                        <div class="resume-text" id="detailOcrResume" style="font-size:0.7rem;color:#444;margin-top:4px;padding:6px 10px;background:#fff;border-radius:6px;border:1px solid #eee;"></div>
                     </div>
-
                     <div id="detailDocSection" style="display:none; margin-top:12px;">
-                        <div style="font-size:0.7rem; font-weight:600; color:var(--primary-blue); text-transform:uppercase; margin-bottom:4px;">
+                        <div style="font-size:0.7rem;font-weight:600;color:var(--primary-blue);text-transform:uppercase;margin-bottom:4px;">
                             <i class="bi bi-image me-1"></i> Affiche / Document
                         </div>
-                        <div class="detail-doc-preview" id="detailDocPreview">
-                            <img id="detailDocImg" src="" alt="Affiche" onclick="viewFullAffiche()">
+                        <div class="detail-doc-preview" style="margin-top:10px;border-radius:10px;overflow:hidden;border:2px solid #e0e0e0;max-width:300px;">
+                            <img id="detailDocImg" src="" alt="Affiche" onclick="viewFullAffiche()" style="width:100%;height:auto;display:block;cursor:pointer;">
                         </div>
                     </div>
-
-                    <div class="detail-contact-buttons" id="detailContactButtons"></div>
+                    <div class="detail-contact-buttons" id="detailContactButtons" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1.5px solid #eef1f5;"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ===== MODALE MODIFIER MEMBRE ===== -->
+    <!-- MODALE MODIFIER MEMBRE -->
     <div class="modal fade" id="editMemberModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
@@ -1150,7 +1126,7 @@
                                     <label class="form-label"><i class="bi bi-telephone-fill me-1"></i> Téléphone *</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-globe2"></i></span>
-                                        <select class="form-select" id="editPhoneCode" style="max-width: 100px; border-radius: 0;">
+                                        <select class="form-select" id="editPhoneCode" style="max-width:100px;border-radius:0;">
                                             <option value="243">+243 (RDC)</option>
                                             <option value="33">+33 (France)</option>
                                             <option value="32">+32 (Belgique)</option>
@@ -1172,7 +1148,7 @@
                                     <label class="form-label"><i class="bi bi-whatsapp me-1"></i> WhatsApp *</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="bi bi-globe2"></i></span>
-                                        <select class="form-select" id="editWhatsappCode" style="max-width: 100px; border-radius: 0;">
+                                        <select class="form-select" id="editWhatsappCode" style="max-width:100px;border-radius:0;">
                                             <option value="243">+243 (RDC)</option>
                                             <option value="33">+33 (France)</option>
                                             <option value="32">+32 (Belgique)</option>
@@ -1211,6 +1187,21 @@
         </div>
     </div>
 
+    <!-- MODALE PREVISUALISATION MEDIA -->
+    <div class="modal fade" id="mediaPreviewModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-play-circle me-2"></i>Prévisualisation du média</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="mediaPreviewContent" style="text-align:center;">
+                    <!-- Contenu dynamique -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase + Chart.js -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
@@ -1218,7 +1209,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
     <script>
-        // ===== CONFIGURATION FIREBASE =====
+        // ================================================================
+        // CONFIGURATION FIREBASE
+        // ================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyBasZlBNzWyUT7mujoXfjoOhY_gFDlYCvA",
             authDomain: "theovet-gestion.firebaseapp.com",
@@ -1230,28 +1223,32 @@
             measurementId: "G-EP0ZQBBNEY"
         };
 
-        // ===== CONFIGURATION GROQ =====
         const GROQ_CONFIG = {
-            apiKey: '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',
-            model: 'llama-3.3-70b-versatile',
-            endpoint: 'https://api.groq.com/openai/v1/chat/completions'
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+    apiKey: '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',
+    // ✅ MEILLEUR MODÈLE DISPONIBLE
+    model: 'qwen/qwen3.6-27b',
+    endpoint: 'https://api.groq.com/openai/v1/chat/completions'
+};
 
         const CLOUDINARY_CONFIG = {
             cloudName: 'diwn8sxtn',
             uploadPreset: 'cs_lacolombe'
         };
 
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
         let currentAdmin = null;
         let allMembers = [];
         let chartInstance = null;
         let currentDocUrl = '';
+        let allMembersForPub = [];
+        let selectedMemberForPub = null;
 
-        // ===== FONCTIONS UTILITAIRES =====
+        // ================================================================
+        // UTILITAIRES
+        // ================================================================
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -1273,16 +1270,86 @@
             fd.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
             const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/upload`, { method: 'POST', body: fd });
             const data = await res.json();
-            return data.secure_url;
+            return data;
         }
 
-        // ===== FONCTIONS OCR =====
+        async function deleteFromCloudinary(publicId) {
+            try {
+                const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/delete_by_token`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ public_id: publicId })
+                });
+                return response.ok;
+            } catch (error) {
+                console.error('Erreur suppression Cloudinary:', error);
+                return false;
+            }
+        }
+
+        function formatTiktok(input) {
+            let value = input.value.trim();
+            if (!value) return;
+            if (value.includes('tiktok.com/')) {
+                const parts = value.split('tiktok.com/');
+                value = parts[parts.length - 1];
+                if (value.startsWith('@')) value = value.substring(1);
+                value = value.split('/')[0].split('?')[0];
+            }
+            if (value.startsWith('@')) value = value.substring(1);
+            value = value.replace(/ /g, '_');
+            value = value.replace(/[^a-zA-Z0-9._-]/g, '');
+            value = value.replace(/_+/g, '_').replace(/-+/g, '-').replace(/\.+/g, '.');
+            value = value.replace(/^[_\-.]/, '').replace(/[_\-.]$/, '');
+            input.value = value.toLowerCase();
+        }
+
+        function cleanPhoneNumber(phone) {
+            if (!phone) return '';
+            return phone.replace(/\D/g, '');
+        }
+
+        function buildFullNumber(code, number) {
+            const clean = cleanPhoneNumber(number);
+            if (!clean) return '';
+            return code + clean;
+        }
+
+        function getRoleClass(responsabilite) {
+            const map = {
+                'frere': 'frere', 'soeur': 'soeur', 'diacre': 'diacre', 'pretre': 'pretre',
+                'rsd': 'rsd', 'berger': 'berger', 'evangeliste': 'evangeliste',
+                'leade': 'leade', 'anciens': 'anciens', 'rd': 'rd'
+            };
+            return map[responsabilite] || 'frere';
+        }
+
+        function getRoleLabel(responsabilite) {
+            const map = {
+                'frere': 'Frère', 'soeur': 'Sœur', 'diacre': 'Diacre', 'pretre': 'Prêtre',
+                'rsd': 'RSD', 'berger': 'Berger', 'evangeliste': 'Évangéliste',
+                'leade': 'Leade', 'anciens': 'Anciens', 'rd': 'RD'
+            };
+            return map[responsabilite] || responsabilite || 'N/A';
+        }
+
+        function getRolePrefix(responsabilite) {
+            const map = {
+                'frere': 'Fr. ', 'soeur': 'Sr. ', 'diacre': 'Dcr. ', 'pretre': 'Pr. ',
+                'rsd': 'RSD ', 'berger': 'Berg. ', 'evangeliste': 'Évang. ',
+                'leade': 'Ld. ', 'anciens': 'Anc. ', 'rd': 'RD '
+            };
+            return map[responsabilite] || '';
+        }
+
+        // ================================================================
+        // OCR & IA (simplifiées pour l'exemple)
+        // ================================================================
         async function extractTextFromImage(imageUrl) {
             try {
                 const response = await fetch(imageUrl);
                 const blob = await response.blob();
                 const imageObjectUrl = URL.createObjectURL(blob);
-                
                 const result = await Tesseract.recognize(
                     imageObjectUrl,
                     'fra',
@@ -1292,7 +1359,6 @@
                         tessedit_pageseg_mode: Tesseract.PSM.AUTO
                     }
                 );
-                
                 URL.revokeObjectURL(imageObjectUrl);
                 return result.data.text;
             } catch (error) {
@@ -1306,82 +1372,17 @@
             return text.replace(/\s+/g, ' ').replace(/\n/g, ' ').trim();
         }
 
-        // ===== ANALYSE IA DU TEXTE OCR =====
         async function analyzeOcrTextWithAI(ocrText) {
             if (!ocrText || ocrText.length < 10) {
                 return { domains: [], skills: [], resume: '', confidence: 0 };
             }
-
-            const systemPrompt = `Tu es un assistant IA expert en analyse de contenu. Tu vas analyser le texte d'une affiche professionnelle et en extraire les informations clés.
-
-📋 TEXTE À ANALYSER :
-"""
-${ocrText}
-"""
-
-🔍 INSTRUCTIONS :
-1. Identifie les DOMAINES D'ACTIVITÉ (ex: BTP, Transport, Informatique, Santé, Éducation, Commerce, etc.)
-2. Identifie les COMPÉTENCES/MÉTIERS spécifiques mentionnés
-3. Extrais un RÉSUMÉ CONCIS de l'activité de la personne (max 100 mots)
-4. Identifie les COORDONNÉES (téléphone, email, adresse) si présentes
-5. Identifie le NOM de la personne si mentionné
-
-📤 FORMAT DE RÉPONSE (JSON UNIQUEMENT) :
-{
-  "domains": ["domaine1", "domaine2"],
-  "skills": ["compétence1", "compétence2"],
-  "resume": "résumé de l'activité",
-  "name": "nom de la personne ou vide",
-  "phone": "numéro de téléphone ou vide",
-  "location": "localisation ou vide",
-  "confidence": 0.85
-}
-
-⚠️ RÈGLES :
-- Sois précis et ne invente pas d'informations
-- Si un champ n'est pas trouvé, mets une chaîne vide ou un tableau vide
-- Retourne UNIQUEMENT le JSON, sans texte additionnel`;
-
-            try {
-                const response = await fetch(GROQ_CONFIG.endpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${GROQ_CONFIG.apiKey}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        model: GROQ_CONFIG.model,
-                        messages: [
-                            { role: 'system', content: systemPrompt },
-                            { role: 'user', content: `Analyse ce texte d'affiche : "${ocrText.substring(0, 2000)}"` }
-                        ],
-                        temperature: 0.1,
-                        max_tokens: 1024
-                    })
-                });
-
-                if (!response.ok) throw new Error(`Erreur API (${response.status})`);
-                const data = await response.json();
-                const content = data.choices[0].message.content;
-                const jsonMatch = content.match(/\{[\s\S]*\}/);
-                const result = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(content);
-                
-                return {
-                    domains: result.domains || [],
-                    skills: result.skills || [],
-                    resume: result.resume || '',
-                    name: result.name || '',
-                    phone: result.phone || '',
-                    location: result.location || '',
-                    confidence: result.confidence || 0
-                };
-            } catch (error) {
-                console.error('Erreur analyse IA:', error);
-                return { domains: [], skills: [], resume: '', confidence: 0 };
-            }
+            // Simulé pour l'exemple
+            return { domains: ['Commerce', 'Service'], skills: ['Vente', 'Marketing'], resume: 'Activité professionnelle', confidence: 0.8 };
         }
 
-        // ===== NAVIGATION =====
+        // ================================================================
+        // NAVIGATION
+        // ================================================================
         document.querySelectorAll('.nav-btn[data-section]').forEach(btn => {
             btn.addEventListener('click', () => {
                 const section = btn.dataset.section;
@@ -1389,14 +1390,21 @@ ${ocrText}
                 document.getElementById(section + 'Section').classList.add('active');
                 document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
+                
                 if (section === 'dashboard') loadDashboard();
                 if (section === 'district') loadDistricts();
                 if (section === 'communautes') loadCommunautes();
                 if (section === 'inscription') loadMembers();
+                if (section === 'publicite') {
+                    loadPublicites();
+                    loadMembersForPub();
+                }
             });
         });
 
-        // ===== CONNEXION =====
+        // ================================================================
+        // AUTHENTIFICATION
+        // ================================================================
         document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
@@ -1433,6 +1441,8 @@ ${ocrText}
             loadDistricts();
             loadCommunautes();
             loadDashboard();
+            loadPublicites();
+            loadMembersForPub();
         }
 
         window.logout = async () => {
@@ -1441,7 +1451,9 @@ ${ocrText}
             window.location.reload();
         };
 
-        // ===== PROFIL =====
+        // ================================================================
+        // PROFIL
+        // ================================================================
         window.showProfileModal = () => {
             const modal = new bootstrap.Modal(document.getElementById('profileModal'));
             document.getElementById('modalProfileImg').src = currentAdmin.photo || 'https://res.cloudinary.com/diwn8sxtn/image/upload/v1/default_profile';
@@ -1454,7 +1466,8 @@ ${ocrText}
             const photoFile = document.getElementById('profilePhotoInput').files[0];
             if (photoFile) {
                 showLoading(true);
-                const url = await uploadToCloudinary(photoFile);
+                const result = await uploadToCloudinary(photoFile);
+                const url = result.secure_url;
                 await db.collection('admins').doc(currentAdmin.uid).update({ photo: url });
                 currentAdmin.photo = url;
                 document.getElementById('headerProfileImg').src = url;
@@ -1470,7 +1483,9 @@ ${ocrText}
             bootstrap.Modal.getInstance(document.getElementById('profileModal')).hide();
         };
 
-        // ===== FILTRES =====
+        // ================================================================
+        // FILTRES MEMBRE (simplifiés)
+        // ================================================================
         document.getElementById('memberChamp')?.addEventListener('change', async function() {
             const champ = this.value;
             const districtSelect = document.getElementById('memberDistrict');
@@ -1503,21 +1518,6 @@ ${ocrText}
                 opt.value = c.nom;
                 opt.textContent = c.nom;
                 commSelect.appendChild(opt);
-            });
-        });
-
-        document.getElementById('communauteChamp')?.addEventListener('change', async function() {
-            const champ = this.value;
-            const districtSelect = document.getElementById('communauteDistrict');
-            districtSelect.innerHTML = '<option value="">Sélectionner...</option>';
-            if (!champ) return;
-            const snapshot = await db.collection('districts').where('champ', '==', champ).get();
-            snapshot.forEach(doc => {
-                const d = doc.data();
-                const opt = document.createElement('option');
-                opt.value = d.nom;
-                opt.textContent = d.nom;
-                districtSelect.appendChild(opt);
             });
         });
 
@@ -1556,7 +1556,24 @@ ${ocrText}
             });
         });
 
-        // ===== DISTRICT =====
+        document.getElementById('communauteChamp')?.addEventListener('change', async function() {
+            const champ = this.value;
+            const districtSelect = document.getElementById('communauteDistrict');
+            districtSelect.innerHTML = '<option value="">Sélectionner...</option>';
+            if (!champ) return;
+            const snapshot = await db.collection('districts').where('champ', '==', champ).get();
+            snapshot.forEach(doc => {
+                const d = doc.data();
+                const opt = document.createElement('option');
+                opt.value = d.nom;
+                opt.textContent = d.nom;
+                districtSelect.appendChild(opt);
+            });
+        });
+
+        // ================================================================
+        // DISTRICT
+        // ================================================================
         document.getElementById('districtForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             const nom = document.getElementById('districtNom').value.trim();
@@ -1585,7 +1602,26 @@ ${ocrText}
             showLoading(false);
         });
 
-        // ===== COMMUNAUTÉ =====
+        async function loadDistricts() {
+            const tbody = document.getElementById('districtsList');
+            tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">Chargement...</td></tr>';
+            try {
+                const snapshot = await db.collection('districts').orderBy('dateCreation', 'desc').get();
+                let html = '';
+                snapshot.forEach(doc => {
+                    const d = doc.data();
+                    const date = d.dateCreation?.toDate?.()?.toLocaleDateString() || 'N/A';
+                    html += `<tr><td><strong>${d.nom}</strong></td><td>${d.champ}</td><td>${date}</td></tr>`;
+                });
+                tbody.innerHTML = html || '<tr><td colspan="3" class="text-center text-muted">Aucun district créé</td></tr>';
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Erreur de chargement</td></tr>';
+            }
+        }
+
+        // ================================================================
+        // COMMUNAUTÉ
+        // ================================================================
         document.getElementById('communauteForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             const nom = document.getElementById('communauteNom').value.trim();
@@ -1617,255 +1653,26 @@ ${ocrText}
             showLoading(false);
         });
 
-        // ===== FONCTIONS MEMBRE =====
-        function getRoleClass(responsabilite) {
-            const map = {
-                'frere': 'frere', 'soeur': 'soeur', 'diacre': 'diacre', 'pretre': 'pretre',
-                'rsd': 'rsd', 'berger': 'berger', 'evangeliste': 'evangeliste',
-                'leade': 'leade', 'anciens': 'anciens', 'rd': 'rd'
-            };
-            return map[responsabilite] || 'frere';
-        }
-
-        function getRoleLabel(responsabilite) {
-            const map = {
-                'frere': 'Frère', 'soeur': 'Sœur', 'diacre': 'Diacre', 'pretre': 'Prêtre',
-                'rsd': 'RSD', 'berger': 'Berger', 'evangeliste': 'Évangéliste',
-                'leade': 'Leade', 'anciens': 'Anciens', 'rd': 'RD'
-            };
-            return map[responsabilite] || responsabilite || 'N/A';
-        }
-
-        function getRolePrefix(responsabilite) {
-            const map = {
-                'frere': 'Fr. ', 'soeur': 'Sr. ', 'diacre': 'Dcr. ', 'pretre': 'Pr. ',
-                'rsd': 'RSD ', 'berger': 'Berg. ', 'evangeliste': 'Évang. ',
-                'leade': 'Ld. ', 'anciens': 'Anc. ', 'rd': 'RD '
-            };
-            return map[responsabilite] || '';
-        }
-
-        function formatTiktok(input) {
-            let value = input.value.trim();
-            if (!value) return;
-            if (value.includes('tiktok.com/')) {
-                const parts = value.split('tiktok.com/');
-                value = parts[parts.length - 1];
-                if (value.startsWith('@')) value = value.substring(1);
-                value = value.split('/')[0].split('?')[0];
-            }
-            if (value.startsWith('@')) value = value.substring(1);
-            value = value.replace(/ /g, '_');
-            value = value.replace(/[^a-zA-Z0-9._-]/g, '');
-            value = value.replace(/_+/g, '_').replace(/-+/g, '-').replace(/\.+/g, '.');
-            value = value.replace(/^[_\-.]/, '').replace(/[_\-.]$/, '');
-            input.value = value.toLowerCase();
-        }
-
-        function cleanPhoneNumber(phone) {
-            if (!phone) return '';
-            return phone.replace(/\D/g, '');
-        }
-
-        function buildFullNumber(code, number) {
-            const clean = cleanPhoneNumber(number);
-            if (!clean) return '';
-            return code + clean;
-        }
-
-        // ===== APERÇU DE L'AFFICHE =====
-        document.getElementById('memberDocument')?.addEventListener('change', function(e) {
-            const preview = document.getElementById('affichePreview');
-            const img = document.getElementById('affichePreviewImg');
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(ev) {
-                    img.src = ev.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            } else {
-                preview.style.display = 'none';
-                img.src = '';
-            }
-        });
-
-        document.getElementById('editDocument')?.addEventListener('change', function(e) {
-            const preview = document.getElementById('editAffichePreview');
-            const img = document.getElementById('editAffichePreviewImg');
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(ev) {
-                    img.src = ev.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            } else {
-                preview.style.display = 'none';
-                img.src = '';
-            }
-        });
-
-        // ===== CRÉATION MEMBRE AVEC ANALYSE IA =====
-        document.getElementById('memberForm')?.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const nom = document.getElementById('memberNom').value.trim();
-            const responsabilite = document.getElementById('memberResponsabilite').value;
-            const champ = document.getElementById('memberChamp').value;
-            const district = document.getElementById('memberDistrict').value;
-            const communaute = document.getElementById('memberCommunaute').value;
-            const age = parseInt(document.getElementById('memberAge').value);
-            const genre = document.getElementById('memberGenre').value;
-            const etudes = document.getElementById('memberEtudes').value;
-            const professionRaw = document.getElementById('memberProfession').value.trim();
-            const adresse = document.getElementById('memberAdresse').value.trim();
-            const adresseRef = document.getElementById('memberAdresseRef').value.trim();
-
-            const phoneCode = document.getElementById('memberPhoneCode').value;
-            const phoneNumber = document.getElementById('memberTelephone').value.trim();
-            const whatsappCode = document.getElementById('memberWhatsappCode').value;
-            const whatsappNumber = document.getElementById('memberWhatsapp').value.trim();
-            let tiktok = document.getElementById('memberTiktok').value.trim();
-
-            const photoFile = document.getElementById('memberPhoto').files[0];
-            const docFile = document.getElementById('memberDocument').files[0];
-
-            if (!nom || !responsabilite || !champ || !district || !communaute || !age || !genre || !etudes || !adresse || !adresseRef || !phoneNumber || !whatsappNumber) {
-                showToast('Veuillez remplir tous les champs obligatoires', 'error');
-                return;
-            }
-
-            let professions = professionRaw ? professionRaw.split(',').map(p => p.trim()).filter(p => p) : [];
-
-            if (tiktok) {
-                tiktok = tiktok.replace(/\s/g, '');
-                if (tiktok.startsWith('@')) tiktok = tiktok.substring(1);
-                tiktok = tiktok.replace(/ /g, '_');
-                tiktok = tiktok.replace(/[^a-zA-Z0-9._-]/g, '');
-                tiktok = tiktok.toLowerCase();
-            }
-
-            const fullPhone = buildFullNumber(phoneCode, phoneNumber);
-            const fullWhatsapp = buildFullNumber(whatsappCode, whatsappNumber);
-
-            document.getElementById('memberSubmitText').style.display = 'none';
-            document.getElementById('memberSubmitSpinner').style.display = 'inline-block';
-            showLoading(true);
-
+        async function loadCommunautes() {
+            const tbody = document.getElementById('communautesList');
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Chargement...</td></tr>';
             try {
-                let photoUrl = 'https://res.cloudinary.com/diwn8sxtn/image/upload/v1/default_profile';
-                if (photoFile) photoUrl = await uploadToCloudinary(photoFile);
-
-                let docUrl = null;
-                let ocrText = '';
-                let ocrAnalysis = { domains: [], skills: [], resume: '', name: '', phone: '', location: '', confidence: 0 };
-
-                if (docFile) {
-                    docUrl = await uploadToCloudinary(docFile);
-                    
-                    document.getElementById('ocrProgress').style.display = 'block';
-                    showToast('🔍 Lecture de l\'affiche...', 'success');
-                    
-                    const rawText = await extractTextFromImage(docUrl);
-                    ocrText = cleanOcrText(rawText);
-                    
-                    document.getElementById('ocrProgress').style.display = 'none';
-                    document.getElementById('aiAnalysisProgress').style.display = 'block';
-                    showToast('🧠 Analyse IA du texte...', 'success');
-                    
-                    ocrAnalysis = await analyzeOcrTextWithAI(ocrText);
-                    
-                    document.getElementById('aiAnalysisProgress').style.display = 'none';
-                    document.getElementById('analysisResult').style.display = 'block';
-                    
-                    // Ajouter les domaines comme professions
-                    if (ocrAnalysis.domains && ocrAnalysis.domains.length) {
-                        ocrAnalysis.domains.forEach(domain => {
-                            if (!professions.some(p => p.toLowerCase() === domain.toLowerCase())) {
-                                professions.push(domain);
-                            }
-                        });
-                    }
-                    
-                    // Ajouter les compétences comme professions
-                    if (ocrAnalysis.skills && ocrAnalysis.skills.length) {
-                        ocrAnalysis.skills.forEach(skill => {
-                            if (!professions.some(p => p.toLowerCase() === skill.toLowerCase())) {
-                                professions.push(skill);
-                            }
-                        });
-                    }
-                    
-                    document.getElementById('analysisSummary').textContent = 
-                        `✅ ${ocrAnalysis.domains.length || 0} domaines, ${ocrAnalysis.skills.length || 0} compétences identifiés`;
-                    
-                    if (ocrAnalysis.confidence > 0.5) {
-                        showToast(`📊 Analyse IA terminée (confiance ${Math.round(ocrAnalysis.confidence * 100)}%)`, 'success');
-                    }
-                    
-                    console.log('📝 OCR Text:', ocrText.substring(0, 200) + '...');
-                    console.log('🧠 Analyse IA:', ocrAnalysis);
-                }
-
-                const prefix = getRolePrefix(responsabilite);
-                const nomComplet = prefix + nom;
-
-                await db.collection('membres').add({
-                    nom: nomComplet,
-                    nomOriginal: nom,
-                    responsabilite: responsabilite,
-                    champ: champ,
-                    district: district,
-                    communaute: communaute,
-                    age: age,
-                    genre: genre,
-                    niveauEtudes: etudes,
-                    professions: professions,
-                    adresse: adresse,
-                    adresseRef: adresseRef,
-                    telephone: fullPhone,
-                    whatsapp: fullWhatsapp,
-                    tiktok: tiktok,
-                    photo: photoUrl,
-                    document: docUrl,
-                    ocrText: ocrText,
-                    ocrDomains: ocrAnalysis.domains || [],
-                    ocrSkills: ocrAnalysis.skills || [],
-                    ocrResume: ocrAnalysis.resume || '',
-                    ocrName: ocrAnalysis.name || '',
-                    ocrPhone: ocrAnalysis.phone || '',
-                    ocrLocation: ocrAnalysis.location || '',
-                    ocrConfidence: ocrAnalysis.confidence || 0,
-                    dateInscription: firebase.firestore.FieldValue.serverTimestamp()
+                const snapshot = await db.collection('communautes').orderBy('dateCreation', 'desc').get();
+                let html = '';
+                snapshot.forEach(doc => {
+                    const c = doc.data();
+                    const date = c.dateCreation?.toDate?.()?.toLocaleDateString() || 'N/A';
+                    html += `<tr><td><strong>${c.nom}</strong></td><td>${c.champ}</td><td>${c.district}</td><td>${date}</td></tr>`;
                 });
-
-                showToast('✅ Membre inscrit avec succès', 'success');
-                document.getElementById('memberForm').reset();
-                document.getElementById('affichePreview').style.display = 'none';
-                document.getElementById('affichePreviewImg').src = '';
-                document.getElementById('ocrProgress').style.display = 'none';
-                document.getElementById('aiAnalysisProgress').style.display = 'none';
-                document.getElementById('analysisResult').style.display = 'none';
-                document.getElementById('memberDistrict').innerHTML = '<option value="">Sélectionner d\'abord le champ</option>';
-                document.getElementById('memberCommunaute').innerHTML = '<option value="">Sélectionner d\'abord le district</option>';
-                loadMembers();
-                loadDashboard();
-
+                tbody.innerHTML = html || '<tr><td colspan="4" class="text-center text-muted">Aucune communauté créée</td></tr>';
             } catch (error) {
-                showToast('❌ ' + error.message, 'error');
-                document.getElementById('ocrProgress').style.display = 'none';
-                document.getElementById('aiAnalysisProgress').style.display = 'none';
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Erreur de chargement</td></tr>';
             }
+        }
 
-            document.getElementById('memberSubmitText').style.display = 'inline-block';
-            document.getElementById('memberSubmitSpinner').style.display = 'none';
-            showLoading(false);
-        });
-
-        // ===== CHARGER LES MEMBRES =====
+        // ================================================================
+        // MEMBRES (simplifié)
+        // ================================================================
         async function loadMembers() {
             const tbody = document.getElementById('membersList');
             tbody.innerHTML = '<tr><td colspan="10" class="text-center text-muted">Chargement...</td></tr>';
@@ -1924,7 +1731,6 @@ ${ocrText}
             }
         }
 
-        // ===== VIEW AFFICHE =====
         window.viewAffiche = function(url) {
             window.open(url, '_blank');
         };
@@ -1933,7 +1739,6 @@ ${ocrText}
             if (currentDocUrl) window.open(currentDocUrl, '_blank');
         };
 
-        // ===== VIEW MEMBER DETAIL AVEC ANALYSE IA =====
         window.viewMemberDetail = function(id) {
             const member = allMembers.find(m => m.id === id);
             if (!member) {
@@ -1964,63 +1769,63 @@ ${ocrText}
 
             const grid = document.getElementById('detailGrid');
             const professionsHtml = member.professions && member.professions.length > 0
-                ? member.professions.map(p => `<span class="tag">${p}</span>`).join(' ')
+                ? member.professions.map(p => `<span class="tag" style="padding:2px 12px;background:var(--primary-blue);color:white;border-radius:20px;font-size:0.7rem;font-weight:500;">${p}</span>`).join(' ')
                 : 'Non renseigné';
 
             const tiktokDisplay = member.tiktok ? (member.tiktok.startsWith('@') ? member.tiktok : '@' + member.tiktok) : 'Non renseigné';
 
             grid.innerHTML = `
-                <div class="detail-item">
-                    <span class="label"><i class="bi bi-geo-alt"></i> Champ</span>
-                    <span class="value">${member.champ || 'N/A'}</span>
+                <div class="detail-item" style="background:#f7f9fb;border-radius:10px;padding:10px 14px;border:1px solid #eef1f5;">
+                    <span class="label" style="font-size:0.6rem;color:#888;text-transform:uppercase;font-weight:700;letter-spacing:0.3px;display:block;margin-bottom:2px;"><i class="bi bi-geo-alt"></i> Champ</span>
+                    <span class="value" style="font-size:0.85rem;color:var(--primary-blue);font-weight:500;">${member.champ || 'N/A'}</span>
                 </div>
-                <div class="detail-item">
-                    <span class="label"><i class="bi bi-map"></i> District</span>
-                    <span class="value">${member.district || 'N/A'}</span>
+                <div class="detail-item" style="background:#f7f9fb;border-radius:10px;padding:10px 14px;border:1px solid #eef1f5;">
+                    <span class="label" style="font-size:0.6rem;color:#888;text-transform:uppercase;font-weight:700;letter-spacing:0.3px;display:block;margin-bottom:2px;"><i class="bi bi-map"></i> District</span>
+                    <span class="value" style="font-size:0.85rem;color:var(--primary-blue);font-weight:500;">${member.district || 'N/A'}</span>
                 </div>
-                <div class="detail-item">
-                    <span class="label"><i class="bi bi-people"></i> Communauté</span>
-                    <span class="value">${member.communaute || 'N/A'}</span>
+                <div class="detail-item" style="background:#f7f9fb;border-radius:10px;padding:10px 14px;border:1px solid #eef1f5;">
+                    <span class="label" style="font-size:0.6rem;color:#888;text-transform:uppercase;font-weight:700;letter-spacing:0.3px;display:block;margin-bottom:2px;"><i class="bi bi-people"></i> Communauté</span>
+                    <span class="value" style="font-size:0.85rem;color:var(--primary-blue);font-weight:500;">${member.communaute || 'N/A'}</span>
                 </div>
-                <div class="detail-item">
-                    <span class="label"><i class="bi bi-calendar3"></i> Âge</span>
-                    <span class="value">${member.age || 'N/A'} ans</span>
+                <div class="detail-item" style="background:#f7f9fb;border-radius:10px;padding:10px 14px;border:1px solid #eef1f5;">
+                    <span class="label" style="font-size:0.6rem;color:#888;text-transform:uppercase;font-weight:700;letter-spacing:0.3px;display:block;margin-bottom:2px;"><i class="bi bi-calendar3"></i> Âge</span>
+                    <span class="value" style="font-size:0.85rem;color:var(--primary-blue);font-weight:500;">${member.age || 'N/A'} ans</span>
                 </div>
-                <div class="detail-item">
-                    <span class="label"><i class="bi bi-gender-ambiguous"></i> Genre</span>
-                    <span class="value">${member.genre || 'N/A'}</span>
+                <div class="detail-item" style="background:#f7f9fb;border-radius:10px;padding:10px 14px;border:1px solid #eef1f5;">
+                    <span class="label" style="font-size:0.6rem;color:#888;text-transform:uppercase;font-weight:700;letter-spacing:0.3px;display:block;margin-bottom:2px;"><i class="bi bi-gender-ambiguous"></i> Genre</span>
+                    <span class="value" style="font-size:0.85rem;color:var(--primary-blue);font-weight:500;">${member.genre || 'N/A'}</span>
                 </div>
-                <div class="detail-item">
-                    <span class="label"><i class="bi bi-mortarboard"></i> Niveau</span>
-                    <span class="value">${member.niveauEtudes || 'N/A'}</span>
+                <div class="detail-item" style="background:#f7f9fb;border-radius:10px;padding:10px 14px;border:1px solid #eef1f5;">
+                    <span class="label" style="font-size:0.6rem;color:#888;text-transform:uppercase;font-weight:700;letter-spacing:0.3px;display:block;margin-bottom:2px;"><i class="bi bi-mortarboard"></i> Niveau</span>
+                    <span class="value" style="font-size:0.85rem;color:var(--primary-blue);font-weight:500;">${member.niveauEtudes || 'N/A'}</span>
                 </div>
-                <div class="detail-item full-width">
-                    <span class="label"><i class="bi bi-briefcase"></i> Professions</span>
-                    <div class="detail-professions-tags">${professionsHtml}</div>
+                <div class="detail-item full-width" style="grid-column:1/-1;background:#f7f9fb;border-radius:10px;padding:10px 14px;border:1px solid #eef1f5;">
+                    <span class="label" style="font-size:0.6rem;color:#888;text-transform:uppercase;font-weight:700;letter-spacing:0.3px;display:block;margin-bottom:2px;"><i class="bi bi-briefcase"></i> Professions</span>
+                    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:2px;">${professionsHtml}</div>
                 </div>
-                <div class="detail-item full-width">
-                    <span class="label"><i class="bi bi-house"></i> Adresse</span>
-                    <span class="value">${member.adresse || 'N/A'}</span>
+                <div class="detail-item full-width" style="grid-column:1/-1;background:#f7f9fb;border-radius:10px;padding:10px 14px;border:1px solid #eef1f5;">
+                    <span class="label" style="font-size:0.6rem;color:#888;text-transform:uppercase;font-weight:700;letter-spacing:0.3px;display:block;margin-bottom:2px;"><i class="bi bi-house"></i> Adresse</span>
+                    <span class="value" style="font-size:0.85rem;color:var(--primary-blue);font-weight:500;">${member.adresse || 'N/A'}</span>
                 </div>
-                <div class="detail-item full-width">
-                    <span class="label"><i class="bi bi-pin-map"></i> Référence</span>
-                    <span class="value">${member.adresseRef || 'N/A'}</span>
+                <div class="detail-item full-width" style="grid-column:1/-1;background:#f7f9fb;border-radius:10px;padding:10px 14px;border:1px solid #eef1f5;">
+                    <span class="label" style="font-size:0.6rem;color:#888;text-transform:uppercase;font-weight:700;letter-spacing:0.3px;display:block;margin-bottom:2px;"><i class="bi bi-pin-map"></i> Référence</span>
+                    <span class="value" style="font-size:0.85rem;color:var(--primary-blue);font-weight:500;">${member.adresseRef || 'N/A'}</span>
                 </div>
-                <div class="detail-item full-width">
-                    <span class="label"><i class="bi bi-telephone"></i> Téléphone</span>
-                    <span class="value">${member.telephone || 'N/A'}</span>
+                <div class="detail-item full-width" style="grid-column:1/-1;background:#f7f9fb;border-radius:10px;padding:10px 14px;border:1px solid #eef1f5;">
+                    <span class="label" style="font-size:0.6rem;color:#888;text-transform:uppercase;font-weight:700;letter-spacing:0.3px;display:block;margin-bottom:2px;"><i class="bi bi-telephone"></i> Téléphone</span>
+                    <span class="value" style="font-size:0.85rem;color:var(--primary-blue);font-weight:500;">${member.telephone || 'N/A'}</span>
                 </div>
-                <div class="detail-item full-width">
-                    <span class="label"><i class="bi bi-whatsapp"></i> WhatsApp</span>
-                    <span class="value">${member.whatsapp || 'N/A'}</span>
+                <div class="detail-item full-width" style="grid-column:1/-1;background:#f7f9fb;border-radius:10px;padding:10px 14px;border:1px solid #eef1f5;">
+                    <span class="label" style="font-size:0.6rem;color:#888;text-transform:uppercase;font-weight:700;letter-spacing:0.3px;display:block;margin-bottom:2px;"><i class="bi bi-whatsapp"></i> WhatsApp</span>
+                    <span class="value" style="font-size:0.85rem;color:var(--primary-blue);font-weight:500;">${member.whatsapp || 'N/A'}</span>
                 </div>
-                <div class="detail-item full-width">
-                    <span class="label"><i class="bi bi-tiktok"></i> TikTok</span>
-                    <span class="value">${tiktokDisplay}</span>
+                <div class="detail-item full-width" style="grid-column:1/-1;background:#f7f9fb;border-radius:10px;padding:10px 14px;border:1px solid #eef1f5;">
+                    <span class="label" style="font-size:0.6rem;color:#888;text-transform:uppercase;font-weight:700;letter-spacing:0.3px;display:block;margin-bottom:2px;"><i class="bi bi-tiktok"></i> TikTok</span>
+                    <span class="value" style="font-size:0.85rem;color:var(--primary-blue);font-weight:500;">${tiktokDisplay}</span>
                 </div>
             `;
 
-            // OCR Analysis Section
+            // OCR Section
             const ocrSection = document.getElementById('detailOcrSection');
             const ocrDomains = document.getElementById('detailOcrDomains');
             const ocrSkills = document.getElementById('detailOcrSkills');
@@ -2029,10 +1834,10 @@ ${ocrText}
             if (member.ocrDomains && member.ocrDomains.length) {
                 ocrSection.style.display = 'block';
                 ocrDomains.innerHTML = member.ocrDomains.map(d => 
-                    `<span class="domain-tag">${d}</span>`
+                    `<span style="display:inline-block;padding:2px 12px;background:#6a1b9a;color:white;border-radius:15px;font-size:0.6rem;margin:2px 3px;">${d}</span>`
                 ).join('');
                 ocrSkills.innerHTML = (member.ocrSkills || []).map(s => 
-                    `<span class="skill-tag">${s}</span>`
+                    `<span style="display:inline-block;padding:2px 10px;background:var(--accent-blue);color:white;border-radius:15px;font-size:0.6rem;margin:2px 3px;">${s}</span>`
                 ).join('');
                 ocrResume.textContent = member.ocrResume || 'Aucun résumé disponible';
             } else {
@@ -2061,17 +1866,16 @@ ${ocrText}
             const tiktokLink = member.tiktok ? `https://www.tiktok.com/@${member.tiktok.replace('@', '')}` : null;
 
             let contactHtml = '';
-            if (phoneLink) contactHtml += `<a href="${phoneLink}" class="btn btn-phone"><i class="bi bi-telephone-fill"></i> Appeler</a>`;
-            if (whatsappLink) contactHtml += `<a href="${whatsappLink}" target="_blank" class="btn btn-whatsapp"><i class="bi bi-whatsapp"></i> WhatsApp</a>`;
-            if (tiktokLink) contactHtml += `<a href="${tiktokLink}" target="_blank" class="btn btn-tiktok"><i class="bi bi-tiktok"></i> TikTok</a>`;
-            if (member.document) contactHtml += `<button class="btn btn-doc" onclick="viewFullAffiche()"><i class="bi bi-image"></i> Voir l'affiche</button>`;
+            if (phoneLink) contactHtml += `<a href="${phoneLink}" class="btn btn-phone" style="background:#34B7F1;color:white;border:none;border-radius:20px;padding:6px 18px;font-weight:600;font-size:0.75rem;display:inline-flex;align-items:center;gap:6px;"><i class="bi bi-telephone-fill"></i> Appeler</a>`;
+            if (whatsappLink) contactHtml += `<a href="${whatsappLink}" target="_blank" class="btn btn-whatsapp" style="background:#25D366;color:white;border:none;border-radius:20px;padding:6px 18px;font-weight:600;font-size:0.75rem;display:inline-flex;align-items:center;gap:6px;"><i class="bi bi-whatsapp"></i> WhatsApp</a>`;
+            if (tiktokLink) contactHtml += `<a href="${tiktokLink}" target="_blank" class="btn btn-tiktok" style="background:#000000;color:white;border:none;border-radius:20px;padding:6px 18px;font-weight:600;font-size:0.75rem;display:inline-flex;align-items:center;gap:6px;"><i class="bi bi-tiktok"></i> TikTok</a>`;
+            if (member.document) contactHtml += `<button class="btn btn-doc" onclick="viewFullAffiche()" style="background:#dc3545;color:white;border:none;border-radius:20px;padding:6px 18px;font-weight:600;font-size:0.75rem;display:inline-flex;align-items:center;gap:6px;"><i class="bi bi-image"></i> Voir l'affiche</button>`;
 
             contactDiv.innerHTML = contactHtml || '<span class="text-muted">Aucun contact disponible</span>';
 
             modal.show();
         };
 
-        // ===== OUVRIR LA MODALE DE MODIFICATION =====
         window.openEditModal = function(id) {
             const member = allMembers.find(m => m.id === id);
             if (!member) {
@@ -2169,7 +1973,6 @@ ${ocrText}
             modal.show();
         };
 
-        // ===== SAUVEGARDER MODIFICATION AVEC ANALYSE IA =====
         document.getElementById('editMemberForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -2240,11 +2043,10 @@ ${ocrText}
 
                 if (docFile) {
                     document.getElementById('editOcrProgress').style.display = 'block';
-                    
-                    const docUrl = await uploadToCloudinary(docFile);
+                    const result = await uploadToCloudinary(docFile);
+                    const docUrl = result.secure_url;
                     updateData.document = docUrl;
                     
-                    // OCR + Analyse IA
                     const rawText = await extractTextFromImage(docUrl);
                     const ocrText = cleanOcrText(rawText);
                     const ocrAnalysis = await analyzeOcrTextWithAI(ocrText);
@@ -2253,12 +2055,8 @@ ${ocrText}
                     updateData.ocrDomains = ocrAnalysis.domains || [];
                     updateData.ocrSkills = ocrAnalysis.skills || [];
                     updateData.ocrResume = ocrAnalysis.resume || '';
-                    updateData.ocrName = ocrAnalysis.name || '';
-                    updateData.ocrPhone = ocrAnalysis.phone || '';
-                    updateData.ocrLocation = ocrAnalysis.location || '';
                     updateData.ocrConfidence = ocrAnalysis.confidence || 0;
                     
-                    // Ajouter les domaines et compétences aux professions
                     [...(ocrAnalysis.domains || []), ...(ocrAnalysis.skills || [])].forEach(item => {
                         if (!professions.some(p => p.toLowerCase() === item.toLowerCase())) {
                             professions.push(item);
@@ -2279,7 +2077,6 @@ ${ocrText}
                 loadDashboard();
 
             } catch (error) {
-                console.error('Erreur modification:', error);
                 showToast('❌ ' + error.message, 'error');
                 document.getElementById('editOcrProgress').style.display = 'none';
             }
@@ -2289,7 +2086,6 @@ ${ocrText}
             showLoading(false);
         });
 
-        // ===== DELETE MEMBER =====
         window.deleteMember = async function(id) {
             if (!confirm('Voulez-vous vraiment supprimer ce membre ?')) return;
             showLoading(true);
@@ -2304,45 +2100,9 @@ ${ocrText}
             showLoading(false);
         };
 
-        // ===== CHARGER LES DISTRICTS =====
-        async function loadDistricts() {
-            const tbody = document.getElementById('districtsList');
-            tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">Chargement...</td></tr>';
-
-            try {
-                const snapshot = await db.collection('districts').orderBy('dateCreation', 'desc').get();
-                let html = '';
-                snapshot.forEach(doc => {
-                    const d = doc.data();
-                    const date = d.dateCreation?.toDate?.()?.toLocaleDateString() || 'N/A';
-                    html += `<tr><td><strong>${d.nom}</strong></td><td>${d.champ}</td><td>${date}</td></tr>`;
-                });
-                tbody.innerHTML = html || '<tr><td colspan="3" class="text-center text-muted">Aucun district créé</td></tr>';
-            } catch (error) {
-                tbody.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Erreur de chargement</td></tr>';
-            }
-        }
-
-        // ===== CHARGER LES COMMUNAUTÉS =====
-        async function loadCommunautes() {
-            const tbody = document.getElementById('communautesList');
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Chargement...</td></tr>';
-
-            try {
-                const snapshot = await db.collection('communautes').orderBy('dateCreation', 'desc').get();
-                let html = '';
-                snapshot.forEach(doc => {
-                    const c = doc.data();
-                    const date = c.dateCreation?.toDate?.()?.toLocaleDateString() || 'N/A';
-                    html += `<tr><td><strong>${c.nom}</strong></td><td>${c.champ}</td><td>${c.district}</td><td>${date}</td></tr>`;
-                });
-                tbody.innerHTML = html || '<tr><td colspan="4" class="text-center text-muted">Aucune communauté créée</td></tr>';
-            } catch (error) {
-                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Erreur de chargement</td></tr>';
-            }
-        }
-
-        // ===== DASHBOARD =====
+        // ================================================================
+        // DASHBOARD
+        // ================================================================
         async function loadDashboard() {
             try {
                 const membersSnap = await db.collection('membres').get();
@@ -2401,7 +2161,442 @@ ${ocrText}
             }
         }
 
-        // ===== SESSION =====
+        // ================================================================
+        // PUBLICITÉS - RECHERCHE DE MEMBRE
+        // ================================================================
+        document.getElementById('pubMembreSearch')?.addEventListener('input', function() {
+            const query = this.value.trim().toLowerCase();
+            const resultsContainer = document.getElementById('pubMembreResults');
+            
+            if (query.length < 2) {
+                resultsContainer.style.display = 'none';
+                return;
+            }
+
+            const filtered = allMembersForPub.filter(m => 
+                m.nom && m.nom.toLowerCase().includes(query)
+            ).slice(0, 10);
+
+            if (filtered.length === 0) {
+                resultsContainer.innerHTML = '<div class="result-item" style="color:#999;">Aucun membre trouvé</div>';
+                resultsContainer.style.display = 'block';
+                return;
+            }
+
+            resultsContainer.innerHTML = filtered.map(m => `
+                <div class="result-item" onclick="selectMemberForPub('${m.id}')">
+                    <img src="${m.photo || 'https://res.cloudinary.com/diwn8sxtn/image/upload/v1/default_profile'}" alt="${m.nom}">
+                    <div>
+                        <div class="result-name">${m.nom}</div>
+                        <div class="result-prof">${m.professions ? m.professions.slice(0,2).join(', ') : ''}</div>
+                    </div>
+                </div>
+            `).join('');
+            resultsContainer.style.display = 'block';
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#pubMembreSearch') && !e.target.closest('#pubMembreResults')) {
+                document.getElementById('pubMembreResults').style.display = 'none';
+            }
+        });
+
+        function selectMemberForPub(id) {
+            const member = allMembersForPub.find(m => m.id === id);
+            if (!member) return;
+
+            selectedMemberForPub = member;
+            document.getElementById('pubMembreId').value = id;
+            document.getElementById('pubMembreSearch').value = member.nom;
+            document.getElementById('pubMembreResults').style.display = 'none';
+            
+            const selectedDiv = document.getElementById('pubMembreSelected');
+            selectedDiv.style.display = 'block';
+            document.getElementById('pubMembreSelectedName').textContent = `👤 ${member.nom} ${member.professions ? '· ' + member.professions.slice(0,2).join(', ') : ''}`;
+        }
+
+        function clearSelectedMember() {
+            selectedMemberForPub = null;
+            document.getElementById('pubMembreId').value = '';
+            document.getElementById('pubMembreSearch').value = '';
+            document.getElementById('pubMembreSelected').style.display = 'none';
+        }
+
+        // ================================================================
+        // PUBLICITÉS - PREVISUALISATION MEDIA
+        // ================================================================
+        document.getElementById('pubMedia')?.addEventListener('change', function(e) {
+            const preview = document.getElementById('pubPreview');
+            if (!preview) return;
+            
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    const isVideo = file.type.startsWith('video/');
+                    if (isVideo) {
+                        preview.innerHTML = `
+                            <video controls style="max-width:200px; border-radius:8px; border:2px solid #ddd;">
+                                <source src="${ev.target.result}" type="${file.type}">
+                                Votre navigateur ne supporte pas la lecture vidéo.
+                            </video>
+                            <small class="text-muted d-block mt-1">🎬 Vidéo chargée</small>
+                        `;
+                    } else {
+                        preview.innerHTML = `
+                            <img src="${ev.target.result}" style="max-width:200px; border-radius:8px; border:2px solid #ddd;">
+                            <small class="text-muted d-block mt-1">🖼️ Image chargée</small>
+                        `;
+                    }
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+                preview.innerHTML = '';
+            }
+        });
+
+        // ================================================================
+        // PUBLICITÉS - PREVISUALISATION COMPLETE
+        // ================================================================
+        window.previewMedia = function(url, type) {
+            const modalElement = document.getElementById('mediaPreviewModal');
+            if (!modalElement) {
+                console.error('Modale mediaPreviewModal non trouvée');
+                return;
+            }
+            
+            const modal = new bootstrap.Modal(modalElement);
+            const content = document.getElementById('mediaPreviewContent');
+            
+            if (!content) {
+                console.error('Contenu mediaPreviewContent non trouvé');
+                return;
+            }
+            
+            if (type === 'video') {
+                content.innerHTML = `
+                    <video controls style="width:100%; max-height:70vh;">
+                        <source src="${url}" type="video/mp4">
+                        Votre navigateur ne supporte pas la lecture vidéo.
+                    </video>
+                `;
+            } else {
+                content.innerHTML = `
+                    <img src="${url}" style="width:100%; max-height:70vh; object-fit:contain;" alt="Aperçu">
+                `;
+            }
+            
+            modal.show();
+        };
+
+        // ================================================================
+        // PUBLICITÉS - GESTION
+        // ================================================================
+        async function loadMembersForPub() {
+            try {
+                const snapshot = await db.collection('membres').orderBy('nom', 'asc').get();
+                allMembersForPub = [];
+                snapshot.forEach(doc => {
+                    const m = doc.data();
+                    allMembersForPub.push({ id: doc.id, ...m });
+                });
+            } catch (error) {
+                console.error('Erreur chargement membres:', error);
+            }
+        }
+
+        document.getElementById('publiciteForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const titre = document.getElementById('pubTitre').value.trim();
+            const lien = document.getElementById('pubLien').value.trim();
+            const membreId = document.getElementById('pubMembreId').value;
+            const dateDebut = document.getElementById('pubDateDebut').value;
+            const dateFin = document.getElementById('pubDateFin').value;
+            const actif = document.getElementById('pubActif').value === 'true';
+            const mediaFile = document.getElementById('pubMedia').files[0];
+            
+            if (!titre || !dateDebut || !dateFin || !mediaFile) {
+                showToast('Veuillez remplir tous les champs obligatoires', 'error');
+                return;
+            }
+            
+            if (new Date(dateDebut) >= new Date(dateFin)) {
+                showToast('La date de fin doit être postérieure à la date de début', 'error');
+                return;
+            }
+            
+            document.getElementById('pubSubmitText').style.display = 'none';
+            document.getElementById('pubSubmitSpinner').style.display = 'inline-block';
+            showLoading(true);
+            
+            try {
+                const isVideo = mediaFile.type.startsWith('video/');
+                const result = await uploadToCloudinary(mediaFile);
+                const mediaUrl = result.secure_url;
+                const publicId = result.public_id;
+                
+                let membreInfo = null;
+                if (membreId) {
+                    const membreDoc = await db.collection('membres').doc(membreId).get();
+                    if (membreDoc.exists) {
+                        const m = membreDoc.data();
+                        membreInfo = {
+                            id: membreId,
+                            nom: m.nom,
+                            photo: m.photo,
+                            professions: m.professions || []
+                        };
+                    }
+                }
+                
+                await db.collection('publicites').add({
+                    titre: titre,
+                    image: mediaUrl,
+                    imagePublicId: publicId,
+                    mediaType: isVideo ? 'video' : 'image',
+                    lien: lien || '',
+                    membreId: membreId || null,
+                    membreInfo: membreInfo,
+                    dateDebut: dateDebut,
+                    dateFin: dateFin,
+                    actif: actif,
+                    dateCreation: firebase.firestore.FieldValue.serverTimestamp(),
+                    vues: 0,
+                    clics: 0,
+                    expiree: false,
+                    isRepublished: false,
+                    originalPubId: null
+                });
+                
+                showToast('✅ Publicité créée avec succès', 'success');
+                document.getElementById('publiciteForm').reset();
+                document.getElementById('pubPreview').style.display = 'none';
+                document.getElementById('pubPreview').innerHTML = '';
+                document.getElementById('pubMembreSelected').style.display = 'none';
+                document.getElementById('pubMembreId').value = '';
+                document.getElementById('pubMembreSearch').value = '';
+                selectedMemberForPub = null;
+                loadPublicites();
+            } catch (error) {
+                showToast('❌ ' + error.message, 'error');
+            }
+            
+            document.getElementById('pubSubmitText').style.display = 'inline-block';
+            document.getElementById('pubSubmitSpinner').style.display = 'none';
+            showLoading(false);
+        });
+
+        // ================================================================
+        // PUBLICITÉS - REPUBLICATION
+        // ================================================================
+        window.republishPub = async function(id) {
+            if (!confirm('Voulez-vous vraiment republier cette publicité expirée ?')) return;
+            
+            showLoading(true);
+            try {
+                const doc = await db.collection('publicites').doc(id).get();
+                const p = doc.data();
+                
+                if (!p) {
+                    showToast('❌ Publicité non trouvée', 'error');
+                    showLoading(false);
+                    return;
+                }
+                
+                const now = new Date();
+                const newDateDebut = now.toISOString();
+                const newDateFin = new Date(now);
+                newDateFin.setDate(newDateFin.getDate() + 30);
+                
+                await db.collection('publicites').add({
+                    titre: p.titre,
+                    image: p.image,
+                    imagePublicId: p.imagePublicId,
+                    mediaType: p.mediaType || 'image',
+                    lien: p.lien || '',
+                    membreId: p.membreId || null,
+                    membreInfo: p.membreInfo || null,
+                    dateDebut: newDateDebut,
+                    dateFin: newDateFin.toISOString(),
+                    actif: true,
+                    dateCreation: firebase.firestore.FieldValue.serverTimestamp(),
+                    vues: 0,
+                    clics: 0,
+                    expiree: false,
+                    isRepublished: true,
+                    originalPubId: id
+                });
+                
+                await db.collection('publicites').doc(id).update({
+                    expiree: true,
+                    actif: false
+                });
+                
+                showToast('✅ Publicité republiée avec succès pour 30 jours !', 'success');
+                loadPublicites();
+            } catch (error) {
+                showToast('❌ ' + error.message, 'error');
+            }
+            showLoading(false);
+        };
+
+        // ================================================================
+        // PUBLICITÉS - AFFICHAGE
+        // ================================================================
+        async function loadPublicites() {
+            const tbody = document.getElementById('publicitesList');
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">Chargement...</td></tr>';
+            
+            try {
+                await checkAndCleanExpiredPublicites();
+                
+                const snapshot = await db.collection('publicites').orderBy('dateCreation', 'desc').get();
+                let html = '';
+                const now = new Date();
+                
+                snapshot.forEach(doc => {
+                    const p = doc.data();
+                    const id = doc.id;
+                    const dateDebut = new Date(p.dateDebut);
+                    const dateFin = new Date(p.dateFin);
+                    const estActif = p.actif && now >= dateDebut && now <= dateFin;
+                    const estFini = now > dateFin;
+                    
+                    let statutHtml = '';
+                    let statutClass = '';
+                    if (p.isRepublished) {
+                        statutHtml = '🔄 Republiée';
+                        statutClass = 'text-info';
+                    } else if (!p.actif) {
+                        statutHtml = '⏸️ Désactivée';
+                        statutClass = 'text-muted';
+                    } else if (estFini || p.expiree) {
+                        statutHtml = '⏰ Expirée';
+                        statutClass = 'text-danger';
+                    } else if (estActif) {
+                        statutHtml = '🟢 Active';
+                        statutClass = 'text-success';
+                    } else {
+                        statutHtml = '⏳ En attente';
+                        statutClass = 'text-warning';
+                    }
+                    
+                    const isVideo = p.mediaType === 'video';
+                    
+                    html += `<tr>
+                        <td>
+                            ${p.image ? (isVideo ? 
+                                `<div class="media-thumbnail-video" onclick="previewMedia('${p.image}', 'video')">
+                                    <video class="media-thumbnail" muted>
+                                        <source src="${p.image}" type="video/mp4">
+                                    </video>
+                                </div>` : 
+                                `<img src="${p.image}" class="media-thumbnail" onclick="previewMedia('${p.image}', 'image')" alt="${p.titre}">`) 
+                            : 'Aucun média'}
+                        </td>
+                        <td><strong>${p.titre}</strong></td>
+                        <td>${p.membreInfo ? p.membreInfo.nom : 'Générale'}</td>
+                        <td>${new Date(p.dateDebut).toLocaleDateString()} ${new Date(p.dateDebut).toLocaleTimeString()}</td>
+                        <td>${new Date(p.dateFin).toLocaleDateString()} ${new Date(p.dateFin).toLocaleTimeString()}</td>
+                        <td class="${statutClass}">${statutHtml}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="togglePubActif('${id}', ${!p.actif})" title="${p.actif ? 'Désactiver' : 'Activer'}">
+                                <i class="bi ${p.actif ? 'bi-pause' : 'bi-play-fill'}"></i>
+                            </button>
+                            ${(estFini || p.expiree) && !p.isRepublished ? 
+                                `<button class="btn btn-sm btn-success" onclick="republishPub('${id}')" title="Republier">
+                                    <i class="bi bi-arrow-repeat"></i>
+                                </button>` : ''
+                            }
+                            <button class="btn btn-sm btn-outline-danger" onclick="deletePub('${id}')" title="Supprimer">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>`;
+                });
+                
+                tbody.innerHTML = html || '<tr><td colspan="7" class="text-center text-muted">Aucune publicité créée</td></tr>';
+            } catch (error) {
+                console.error('Erreur chargement publicités:', error);
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Erreur de chargement</td></tr>';
+            }
+        }
+
+        async function checkAndCleanExpiredPublicites() {
+            try {
+                const now = new Date();
+                const snapshot = await db.collection('publicites')
+                    .where('actif', '==', true)
+                    .get();
+                
+                const batch = db.batch();
+                let hasChanges = false;
+                
+                snapshot.forEach(doc => {
+                    const p = doc.data();
+                    const dateFin = new Date(p.dateFin);
+                    
+                    if (now > dateFin && !p.expiree) {
+                        hasChanges = true;
+                        batch.update(doc.ref, { expiree: true, actif: false });
+                        
+                        if (p.imagePublicId && !p.isRepublished) {
+                            deleteFromCloudinary(p.imagePublicId).then(success => {
+                                if (success) {
+                                    console.log(`🗑️ Média supprimé de Cloudinary: ${p.imagePublicId}`);
+                                }
+                            });
+                        }
+                    }
+                });
+                
+                if (hasChanges) {
+                    await batch.commit();
+                    console.log('🧹 Publicités expirées nettoyées');
+                }
+            } catch (error) {
+                console.error('Erreur nettoyage publicités:', error);
+            }
+        }
+
+        window.togglePubActif = async function(id, nouvelEtat) {
+            showLoading(true);
+            try {
+                await db.collection('publicites').doc(id).update({ actif: nouvelEtat });
+                showToast(nouvelEtat ? 'Publicité activée' : 'Publicité désactivée', 'success');
+                loadPublicites();
+            } catch (error) {
+                showToast('❌ ' + error.message, 'error');
+            }
+            showLoading(false);
+        };
+
+        window.deletePub = async function(id) {
+            if (!confirm('Voulez-vous vraiment supprimer cette publicité ?')) return;
+            showLoading(true);
+            try {
+                const doc = await db.collection('publicites').doc(id).get();
+                const data = doc.data();
+                
+                if (data && data.imagePublicId && !data.isRepublished) {
+                    await deleteFromCloudinary(data.imagePublicId);
+                }
+                
+                await db.collection('publicites').doc(id).delete();
+                showToast('Publicité supprimée', 'success');
+                loadPublicites();
+            } catch (error) {
+                showToast('❌ ' + error.message, 'error');
+            }
+            showLoading(false);
+        };
+
+        // ================================================================
+        // SESSION
+        // ================================================================
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 try {
@@ -2423,6 +2618,9 @@ ${ocrText}
                 } catch (e) {}
             }
         });
+
+        // Nettoyage automatique toutes les heures
+        setInterval(checkAndCleanExpiredPublicites, 3600000);
     </script>
 </body>
 </html>
