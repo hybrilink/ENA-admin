@@ -847,8 +847,9 @@
                                 <div class="mb-3">
                                     <label class="form-label"><i class="bi bi-image me-1"></i> Média (image ou vidéo) *</label>
                                     <input type="file" class="form-control" id="pubMedia" accept="image/*,video/*" required>
+                                    <small class="text-muted">Formats supportés: images (jpg, png, gif) et vidéos (mp4, webm, mov). Taille max: 10 Mo. Durée max: 1min 30s.</small>
                                     <div id="pubPreview" style="display:none; margin-top:8px;"></div>
-                                    <small class="text-muted">Formats supportés: images (jpg, png, gif) et vidéos (mp4, webm, mov)</small>
+                                    <div id="pubMediaError" style="display:none; color: var(--danger-red); font-size: 0.75rem; margin-top: 4px;"></div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label"><i class="bi bi-tag-fill me-1"></i> Titre *</label>
@@ -887,6 +888,15 @@
                                         <option value="false">Non</option>
                                     </select>
                                 </div>
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="bi bi-display me-1"></i> Emplacement d'affichage</label>
+                                    <select class="form-select" id="pubEmplacement">
+                                        <option value="all">Partout (Index + Statut)</option>
+                                        <option value="statut">Statut uniquement</option>
+                                        <option value="index">Index uniquement</option>
+                                    </select>
+                                    <small class="text-muted">Choisissez où cette publicité doit apparaître.</small>
+                                </div>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary w-100 py-3">
@@ -907,12 +917,13 @@
                                     <th>Membre</th>
                                     <th>Début</th>
                                     <th>Fin</th>
+                                    <th>Emplacement</th>
                                     <th>Statut</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="publicitesList">
-                                <tr><td colspan="7" class="text-center text-muted">Chargement...</td></tr>
+                                <tr><td colspan="8" class="text-center text-muted">Chargement...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1224,11 +1235,10 @@
         };
 
         const GROQ_CONFIG = {
-    apiKey: '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',
-    // ✅ MEILLEUR MODÈLE DISPONIBLE
-    model: 'qwen/qwen3.6-27b',
-    endpoint: 'https://api.groq.com/openai/v1/chat/completions'
-};
+            apiKey: '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',
+            model: 'qwen/qwen3.6-27b',
+            endpoint: 'https://api.groq.com/openai/v1/chat/completions'
+        };
 
         const CLOUDINARY_CONFIG = {
             cloudName: 'diwn8sxtn',
@@ -1378,6 +1388,42 @@
             }
             // Simulé pour l'exemple
             return { domains: ['Commerce', 'Service'], skills: ['Vente', 'Marketing'], resume: 'Activité professionnelle', confidence: 0.8 };
+        }
+
+        // ================================================================
+        // VALIDATION DES FICHIERS PUB
+        // ================================================================
+        function validatePubFile(file) {
+            const maxSize = 10 * 1024 * 1024; // 10 Mo
+            const maxDuration = 90; // 1min 30s
+
+            if (file.size > maxSize) {
+                return { valid: false, error: 'Le fichier dépasse la taille maximale de 10 Mo.' };
+            }
+
+            // Vérifier la durée si c'est une vidéo
+            if (file.type.startsWith('video/')) {
+                return new Promise((resolve) => {
+                    const video = document.createElement('video');
+                    video.preload = 'metadata';
+                    video.onloadedmetadata = function() {
+                        const duration = video.duration;
+                        if (duration > maxDuration) {
+                            resolve({ valid: false, error: `La vidéo dure ${Math.round(duration)}s, la durée maximale est de 90s.` });
+                        } else {
+                            resolve({ valid: true });
+                        }
+                        URL.revokeObjectURL(video.src);
+                    };
+                    video.onerror = function() {
+                        // Si on ne peut pas lire la durée, on laisse passer (cas de fichiers corrompus)
+                        resolve({ valid: true, warning: 'Impossible de lire la durée de la vidéo.' });
+                    };
+                    video.src = URL.createObjectURL(file);
+                });
+            }
+
+            return { valid: true };
         }
 
         // ================================================================
@@ -2227,35 +2273,71 @@
         // ================================================================
         document.getElementById('pubMedia')?.addEventListener('change', function(e) {
             const preview = document.getElementById('pubPreview');
+            const errorDiv = document.getElementById('pubMediaError');
             if (!preview) return;
             
             const file = this.files[0];
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+            
             if (file) {
-                const reader = new FileReader();
-                reader.onload = function(ev) {
-                    const isVideo = file.type.startsWith('video/');
-                    if (isVideo) {
-                        preview.innerHTML = `
-                            <video controls style="max-width:200px; border-radius:8px; border:2px solid #ddd;">
-                                <source src="${ev.target.result}" type="${file.type}">
-                                Votre navigateur ne supporte pas la lecture vidéo.
-                            </video>
-                            <small class="text-muted d-block mt-1">🎬 Vidéo chargée</small>
-                        `;
-                    } else {
-                        preview.innerHTML = `
-                            <img src="${ev.target.result}" style="max-width:200px; border-radius:8px; border:2px solid #ddd;">
-                            <small class="text-muted d-block mt-1">🖼️ Image chargée</small>
-                        `;
-                    }
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
+                // Validation du fichier
+                const validation = validatePubFile(file);
+                if (validation instanceof Promise) {
+                    validation.then(result => {
+                        if (!result.valid) {
+                            errorDiv.textContent = result.error;
+                            errorDiv.style.display = 'block';
+                            this.value = '';
+                            preview.style.display = 'none';
+                            preview.innerHTML = '';
+                            return;
+                        }
+                        if (result.warning) {
+                            showToast(result.warning, 'error');
+                        }
+                        showPreview(file, preview);
+                    }).catch(() => {
+                        showPreview(file, preview);
+                    });
+                } else if (!validation.valid) {
+                    errorDiv.textContent = validation.error;
+                    errorDiv.style.display = 'block';
+                    this.value = '';
+                    preview.style.display = 'none';
+                    preview.innerHTML = '';
+                    return;
+                } else {
+                    showPreview(file, preview);
+                }
             } else {
                 preview.style.display = 'none';
                 preview.innerHTML = '';
             }
         });
+
+        function showPreview(file, preview) {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                const isVideo = file.type.startsWith('video/');
+                if (isVideo) {
+                    preview.innerHTML = `
+                        <video controls style="max-width:200px; border-radius:8px; border:2px solid #ddd;">
+                            <source src="${ev.target.result}" type="${file.type}">
+                            Votre navigateur ne supporte pas la lecture vidéo.
+                        </video>
+                        <small class="text-muted d-block mt-1">🎬 Vidéo chargée</small>
+                    `;
+                } else {
+                    preview.innerHTML = `
+                        <img src="${ev.target.result}" style="max-width:200px; border-radius:8px; border:2px solid #ddd;">
+                        <small class="text-muted d-block mt-1">🖼️ Image chargée</small>
+                    `;
+                }
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
 
         // ================================================================
         // PUBLICITÉS - PREVISUALISATION COMPLETE
@@ -2316,6 +2398,7 @@
             const dateDebut = document.getElementById('pubDateDebut').value;
             const dateFin = document.getElementById('pubDateFin').value;
             const actif = document.getElementById('pubActif').value === 'true';
+            const emplacement = document.getElementById('pubEmplacement').value;
             const mediaFile = document.getElementById('pubMedia').files[0];
             
             if (!titre || !dateDebut || !dateFin || !mediaFile) {
@@ -2363,6 +2446,7 @@
                     dateDebut: dateDebut,
                     dateFin: dateFin,
                     actif: actif,
+                    emplacement: emplacement, // 'all', 'statut', 'index'
                     dateCreation: firebase.firestore.FieldValue.serverTimestamp(),
                     vues: 0,
                     clics: 0,
@@ -2378,6 +2462,7 @@
                 document.getElementById('pubMembreSelected').style.display = 'none';
                 document.getElementById('pubMembreId').value = '';
                 document.getElementById('pubMembreSearch').value = '';
+                document.getElementById('pubMediaError').style.display = 'none';
                 selectedMemberForPub = null;
                 loadPublicites();
             } catch (error) {
@@ -2422,6 +2507,7 @@
                     dateDebut: newDateDebut,
                     dateFin: newDateFin.toISOString(),
                     actif: true,
+                    emplacement: p.emplacement || 'all',
                     dateCreation: firebase.firestore.FieldValue.serverTimestamp(),
                     vues: 0,
                     clics: 0,
@@ -2448,7 +2534,7 @@
         // ================================================================
         async function loadPublicites() {
             const tbody = document.getElementById('publicitesList');
-            tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">Chargement...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">Chargement...</td></tr>';
             
             try {
                 await checkAndCleanExpiredPublicites();
@@ -2486,6 +2572,12 @@
                     
                     const isVideo = p.mediaType === 'video';
                     
+                    const emplacementLabel = {
+                        'all': '📱 Partout',
+                        'statut': '📋 Statut',
+                        'index': '🏠 Index'
+                    }[p.emplacement] || '📱 Partout';
+                    
                     html += `<tr>
                         <td>
                             ${p.image ? (isVideo ? 
@@ -2501,6 +2593,7 @@
                         <td>${p.membreInfo ? p.membreInfo.nom : 'Générale'}</td>
                         <td>${new Date(p.dateDebut).toLocaleDateString()} ${new Date(p.dateDebut).toLocaleTimeString()}</td>
                         <td>${new Date(p.dateFin).toLocaleDateString()} ${new Date(p.dateFin).toLocaleTimeString()}</td>
+                        <td><span class="badge bg-secondary">${emplacementLabel}</span></td>
                         <td class="${statutClass}">${statutHtml}</td>
                         <td>
                             <button class="btn btn-sm btn-outline-primary" onclick="togglePubActif('${id}', ${!p.actif})" title="${p.actif ? 'Désactiver' : 'Activer'}">
@@ -2518,10 +2611,10 @@
                     </tr>`;
                 });
                 
-                tbody.innerHTML = html || '<tr><td colspan="7" class="text-center text-muted">Aucune publicité créée</td></tr>';
+                tbody.innerHTML = html || '<tr><td colspan="8" class="text-center text-muted">Aucune publicité créée</td></tr>';
             } catch (error) {
                 console.error('Erreur chargement publicités:', error);
-                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Erreur de chargement</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center text-danger">Erreur de chargement</td></tr>';
             }
         }
 
